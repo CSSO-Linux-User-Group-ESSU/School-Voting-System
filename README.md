@@ -1,5 +1,5 @@
 # CCS-Voting
-A voting system for CSS.
+A voting system for CCS.
 
 # After cloning the repo run on terminal:
 1. `cd CCS-Voting`

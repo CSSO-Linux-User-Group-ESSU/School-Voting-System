@@ -32,7 +32,7 @@ def generate_ballot(display_controls=False):
         for position in positions:
             name = position.name
             position_name = slugify(name)
-            candidates = Candidate.objects.filter(position=position)
+            candidates = Candidate.objects.filter(position=position).order_by("fullname")
             if not candidates:
                 output += "<div id='no-data'><p>Configuring The Candidates!</p><p>Won't take long!!</p></div>"
                 has_data = False
@@ -49,9 +49,13 @@ def generate_ballot(display_controls=False):
                         input_box = '<input value="'+str(candidate.id)+'" type="radio" class="flat-red ' + \
                             position_name+'" name="'+position_name+'">'
                     image = "/media/" + str(candidate.photo)
-                    candidates_data = candidates_data + '<li>' + input_box + '<button type="button" class="btn btn-primary btn-sm btn-flat clist platform" data-fullname="'+candidate.fullname+'" data-bio="'+candidate.bio+'"><i class="fa fa-search"></i> Platform</button><img src="' + \
-                        image+'" height="100px" width="100px" class="clist"><span class="cname clist">' + \
-                        candidate.fullname+'</span></li>'
+                    candidates_data = candidates_data + \
+                        '<li>' + input_box + \
+                            '<button type="button" class="btn btn-primary btn-sm btn-flat clist platform" data-fullname="'+candidate.fullname+'" data-bio="'+candidate.bio+'">'+\
+                                '<i class="fa fa-search"></i> Platform</button>'+\
+                                '<img src="' +image+'" height="100px" width="100px" class="candidate-image">'+\
+                                '<span class="cname clist">' +candidate.fullname+'</span>'+\
+                        '</li>'
                 up = ''
                 if position.priority == 1:
                     up = 'disabled'

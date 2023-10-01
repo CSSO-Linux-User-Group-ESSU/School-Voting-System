@@ -11,4 +11,5 @@ urlpatterns = [
     path('ballot/vote', views.show_ballot, name='show_ballot'),
     path('ballot/vote/preview', views.preview_vote, name='preview_vote'),
     path('ballot/vote/submit', views.submit_ballot, name='submit_ballot'),
+    path('candidate/fetch', views.generate_voters_ballot, name="fetch_candidate")
 ]

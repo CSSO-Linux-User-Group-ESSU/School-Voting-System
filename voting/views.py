@@ -8,6 +8,7 @@ from django.conf import settings
 from django.http import JsonResponse
 import requests
 import json
+from django.core.paginator import Paginator
 # Create your views here.
 
 
@@ -15,72 +16,96 @@ def index(request):
     if not request.user.is_authenticated:
         return account_login(request)
     context = {}
-    # return render(request, "voting/login.html", context)
+    return render(reverse("show_ballot"))
 
 
 def generate_ballot(display_controls=False):
     positions = Position.objects.order_by('priority').all()
     output = ""
-    candidates_data = ""
-    num = 1
     has_data = True
     # return None
     if not positions:
-        output += "<div id='no-data'><p>Election Hasn't started yet!</p><p>Stay Tuned!!</p></div>"
+        output += "<div id='admin-no-data'><p>Election Hasn't started yet!</p><p>Stay Tuned!!</p></div>"
         has_data = False
     else:
         for position in positions:
             name = position.name
             position_name = slugify(name)
             candidates = Candidate.objects.filter(position=position).order_by("fullname")
+
+            #   Transfer the creation of header to the top instead at the bottom to create a header even though there's no candidate 
+            #   so that the ballot can be positioned or arranged
+            up = ''
+            if position.priority == 1:
+                up = 'disabled'
+            down = ''
+            if position.priority == positions.count():
+                down = 'disabled'
+            output = output + f"""
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="box box-solid" id="{position.id}">
+                            <div class="box-header with-border">
+                                <h3 class="box-title"><b>{name}</b></h3>"""
+
+            if display_controls:
+                output = output + f"""
+                                <div class="pull-right box-tools">
+                                    <button type="button" class="btn btn-default btn-sm moveup" data-id="{position.id}" {up}><i class="fa fa-arrow-up"></i> </button>
+                                    <button type="button" class="btn btn-default btn-sm movedown" data-id="{position.id}" {down}><i class="fa fa-arrow-down"></i></button>
+                                </div>"""
+            
+            output += """   </div>
+                            <div class="box-body">"""
             if not candidates:
-                output += "<div id='no-data'><p>Configuring The Candidates!</p><p>Won't take long!!</p></div>"
+                output += """   <div id='admin-no-data'>
+                                    <p>No candidate for this position!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>"""
                 has_data = False
             else:
                 for candidate in candidates:
+                    candidates_data = ""
                     if position.max_vote > 1:
                         instruction = "You may select up to " + \
                             str(position.max_vote) + " candidates"
                         input_box = '<input type="checkbox" value="'+str(candidate.id)+'" class="flat-red ' + \
                             position_name+'" name="' + \
                             position_name+"[]" + '">'
-                    else:
+                    else: 
                         instruction = "Select only one candidate"
                         input_box = '<input value="'+str(candidate.id)+'" type="radio" class="flat-red ' + \
-                            position_name+'" name="'+position_name+'">'
+                            position_name+'" name="'+position_name+'" id="'+position_name+str(candidate.id)+'">'
                     image = "/media/" + str(candidate.photo)
+                    
+                    #Updated html code readability
                     candidates_data = candidates_data + \
-                        '<li>' + input_box + \
-                            '<button type="button" class="btn btn-primary btn-sm btn-flat clist platform" data-fullname="'+candidate.fullname+'" data-bio="'+candidate.bio+'">'+\
-                                '<i class="fa fa-search"></i> Platform</button>'+\
-                                '<img src="' +image+'" height="100px" width="100px" class="candidate-image">'+\
-                                '<span class="cname clist">' +candidate.fullname+'</span>'+\
+                        '<li style="text-align:center;">' + \
+                            '<div class="flip-box" id="flip-box'+str(candidate.id)+'">'+\
+                                '<div class="flip-box-inner" id="flip-box-inner'+str(candidate.id)+'">'+\
+                                    '<div class="flip-box-front">'+\
+                                        '<img src="' +image+'" class="candidate-image" onClick="showPlatform('+str(candidate.id)+')">'+\
+                                    '</div>'+\
+                                    '<div class="flip-box-back" onClick="hidePlatform('+str(candidate.id)+')">'+\
+                                        '<h3>Platform</h3>'+\
+                                        '<p>'+candidate.bio+'</p>'+\
+                                    '</div>'+\
+                                '</div>'+\
+                            '</div>'+\
+                            '<label for="'+position_name+str(candidate.id)+'">'+ input_box+'<span class="cname clist" style="vertical-align:middle;">' +candidate.fullname+'</span></label>' +\
                         '</li>'
-                up = ''
-                if position.priority == 1:
-                    up = 'disabled'
-                down = ''
-                if position.priority == positions.count():
-                    down = 'disabled'
-                output = output + f"""<div class="row">	<div class="col-xs-12"><div class="box box-solid" id="{position.id}">
-                    <div class="box-header with-border">
-                    <h3 class="box-title"><b>{name}</b></h3>"""
 
-                if display_controls:
-                    output = output + f""" <div class="pull-right box-tools">
-                <button type="button" class="btn btn-default btn-sm moveup" data-id="{position.id}" {up}><i class="fa fa-arrow-up"></i> </button>
-                <button type="button" class="btn btn-default btn-sm movedown" data-id="{position.id}" {down}><i class="fa fa-arrow-down"></i></button>
-                </div>"""
-
-                output = output + f"""</div>
-                <div class="box-body">
+                output = output + f"""
                     <p>{instruction}
                     <span class="pull-right">
                         <button type="button" class="btn btn-success btn-sm btn-flat reset" data-desc="{position_name}"><i class="fa fa-refresh"></i> Reset</button>
                     </span>
                     </p>
-                    <div id="candidate_list">
-                        <ul>
+                    <div>
+                        <ul class="candidate-ul">
                             {candidates_data}
                         </ul>
                     </div>
@@ -88,11 +113,7 @@ def generate_ballot(display_controls=False):
                 </div>
                 </div>
                 </div>
-                """
-                position.priority = num
-                position.save()
-                num = num + 1
-                candidates_data = ''
+                """ 
     return {'html' : output, "has_data" : has_data}
 
 
@@ -249,13 +270,103 @@ def show_ballot(request):
     if request.user.voter.voted:
         messages.error(request, "You have voted already")
         return redirect(reverse('voterDashboard'))
-    ballot = generate_ballot(display_controls=False)
-    context = {
-        'ballot': ballot["html"],
-        'has_data': ballot['has_data']
-    }
-    return render(request, "voting/voter/ballot.html", context)
+    voted_form = voted_candidate_form()
+    return render(request, "voting/voter/ballot.html", {"voted_form" : voted_form})
 
+def voted_candidate_form():
+    """
+    Server-side html creation of voters ballot.
+    """
+
+    positions = Position.objects.all().order_by('priority') #Database Query
+    form = f"""<div class='col-xs-12' id='forda-modal'>
+                    <div class='box box-solid'>
+                        <div class='box-header with-border'>
+                            <h3 class='box-title'>Voted Candidates</h3>
+                        </div>
+                    <div class='voted-body'>"""
+    
+    for pos in positions: #Iterate over the available position and create an html
+        form += f"""<div class="candidate-name">
+                        <p><b>{pos}</b></p>"""
+        for i in range(pos.max_vote):
+            form += f"""<p class="voted" id='{slugify(pos.name+str(pos.id))}'>• None</p>
+                        <input name='{slugify(pos.name)}' type='hidden'
+                            id='{slugify(pos.name+str(pos.id))}-val'></input>
+                    </div>"""
+    form += "<a href='#confirm_vote' data-toggle='modal' class='btn btn-success btn-sm btn-flat custom-button' id='cast-modal'>Cast Vote</a></div>"
+    
+    return form
+
+def generate_voters_ballot(request):
+    queryset = Position.objects.order_by('priority').all()
+    html = ""
+    candidates_html = ""
+    next_page = ""
+    if queryset:
+        items_per_page = 1
+        paginator = Paginator(queryset, items_per_page)
+        page_number = request.GET.get('page', 1)
+        page = paginator.get_page(page_number)
+        candidates = Candidate.objects.filter(position=page[0]).order_by("fullname")
+        position = queryset[int(page_number) - 1]
+        if page.has_next():
+            next_page = f'<button onClick="load_candidate({page.next_page_number()})">Next Position</button>'
+        
+        position_name = slugify(position)
+        html+= f"""<div class='col-xs-12'>
+                    <div class='box box-solid' id='{position.id}'>
+                        <div class='box-header with-border'>
+                            <h3 class='box-title'>{position_name.title()}</h3>   
+                        </div>"""
+        if candidates:
+            if position.max_vote > 1:
+                instruction = "You may select up to" + str(position.max_vote) + "candidates"
+            else:
+                instruction = "Select only one candidate"
+            for cand in candidates:
+                paraID = slugify(position_name+str(position.id))
+                if position.max_vote > 1:
+                    input_box = '<input type="checkbox" value="'+str(cand.id)+'" class="flat-red ' + \
+                        position_name+'" name="' + \
+                        position_name+"[]" + '">'
+                else:
+                    input_box = f"""<input value='{str(cand.id)}' type='radio' class='flat-red {position_name}' 
+                            name='{position_name}' id='{position_name+str(cand.id)}'
+                            onClick="updateVoted('{paraID}', '{cand.fullname}', '{str(cand.id)}')">"""
+                image = '/media/' + str(cand.photo)
+                candidates_html += f"""<li style='text-align:center;'>
+                                        <div class='flip-box' id='flip-box{str(cand.id)}'>
+                                            <div class='flip-box-inner' id='flip-box-inner{str(cand.id)}'>
+                                                <div class='flip-box-front'>
+                                                    <img src='{image}' class='candidate-image' onClick='showPlatform({str(cand.id)})'/>
+                                                </div>
+                                                <div class='flip-box-back' onClick='hidePlatform({str(cand.id)})'>
+                                                    <h3>Platform<h3>
+                                                    <p>{cand.bio}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label for='{position_name}{str(cand.id)}'>{input_box}<span class="cname clist" style="vertical-align:middle;">{cand.fullname}</span></label>
+                                    </li>"""
+            
+            html += f"""<div class='box-body'>
+                            <p>{instruction}
+                                <span class='pull-right'>
+                                    <button type="button" onClick='updateVoted("{paraID}")' class="btn btn-success btn-sm btn-flat reset" data-desc="{position_name}"><i class="fa fa-refresh"></i> Reset</button>
+                                </span>
+                            </p>
+                            <div class='candidate-ul'>
+                                {candidates_html}
+                            </div>
+                        </div>
+                    </div>
+                </div>"""
+        else:
+            html += "<div id='no-data'><p>No candidate for this position!</p></div>"
+    else:
+        html += "<div id='no-data'><p>Election Hasn't started yet!</p><p>Stay Tuned!!</p></div>"
+    return JsonResponse({"html" : html, "next_button" : next_page}, safe=False)
 
 def preview_vote(request):
     if request.method != 'POST':
@@ -346,6 +457,9 @@ def submit_ballot(request):
     form = dict(request.POST)
     form.pop('csrfmiddlewaretoken', None)  # Pop CSRF Token
     form.pop('submit_vote', None)  # Pop Submit Button
+    
+    #Check if form is empty since this isn't a radio anymore
+    form = {submitted: form[submitted] for submitted in form if form[submitted][0]}
 
     # Ensure at least one vote is selected
     if len(form.keys()) < 1:

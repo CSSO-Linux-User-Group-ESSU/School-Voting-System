@@ -2,7 +2,7 @@
 {% block content %}
 <section class="content">
   <div class="row">
-    <div class="col-xs-10 col-xs-offset-1" id="content">
+    <div class="col-xs-10 col-xs-offset-1" id="contenty">
     </div>
   </div>
 </section>
@@ -14,6 +14,12 @@
 {% block custom_js %}
   
 <script>
+  function showPlatform(id) {
+    $(`#flip-box-inner${id}`).css("transform", "rotateY(180deg)")
+  }
+  function hidePlatform(id) {
+    $(`#flip-box-inner${id}`).css("transform", "rotateY(0deg)")
+  }
   $(function(){
     fetch();
   
@@ -67,7 +73,7 @@
       url: '{% url "fetch_ballot" %}',
       dataType: 'json',
       success: function(response){
-        $('#content').html(response).iCheck({checkboxClass: 'icheckbox_flat-green',radioClass: 'iradio_flat-green'});
+        $('#contenty').html(response.html).iCheck({checkboxClass: 'icheckbox_flat-green',radioClass: 'iradio_flat-green'});
       }
     });
   }

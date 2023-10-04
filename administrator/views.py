@@ -391,3 +391,6 @@ def resetVote(request):
     Voter.objects.all().update(voted=False, verified=False, otp=None)
     messages.success(request, "All votes has been reset")
     return redirect(reverse('viewVotes'))
+
+def members(request):
+    return render(request, "members.html")

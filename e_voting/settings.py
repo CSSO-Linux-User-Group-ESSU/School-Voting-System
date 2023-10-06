@@ -144,9 +144,8 @@ STATICFILES_DIRS = [
 ]
 
 AUTH_USER_MODEL = 'account.CustomUser'
-AUTHENTICATION_BACKENDS = ['account.email_backend.EmailBackend']
+AUTHENTICATION_BACKENDS = ['account.username_backend.UsernameBackend']
 
 ELECTION_TITLE_PATH = os.path.join(
     BASE_DIR, 'election_title.txt')  # Election Title File
 
-SEND_OTP = False  # If you toggle this to False, Kindly use 0000 as your OTP

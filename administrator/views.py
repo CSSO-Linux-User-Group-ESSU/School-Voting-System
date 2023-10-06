@@ -8,7 +8,8 @@ from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 import json  # Not used
 from django_renderpdf.views import PDFView
-
+from django.db.models import Count
+from administrator.voter_upload import upload_voters
 
 def find_n_winners(data, n):
     """Read More
@@ -122,16 +123,61 @@ def dashboard(request):
     }
     return render(request, "admin/home.html", context)
 
+#Added method of adding course
+def colleges(request):
+    collegesForm = DepartmentForm(request.POST)         #Get tge form from forms.py
+    if request.method == "POST":                        #Ensuring correct usage
+        if collegesForm.is_valid():                     #validate the form
+            collegesForm.save()                         #Save to database
+            messages.success(request, "Added College")  
+        else:
+            messages.error(request, "Invalid Form")
+    return redirect(reverse("course"))
+
+
+#Added method for adding course and rendering the html
+def course(request):
+    colleges = Course.objects.annotate(voter_count=Count('voter')) #Query with the count of voter each course
+    courseForm = CourseForm(request.POST or None)
+    departmentForm = DepartmentForm(request.POST or None)
+    context = {
+        'course' : courseForm,
+        'department' : departmentForm,
+        'colleges' : colleges,
+        'page_title' : "Courses/Department"
+    }
+
+    if request.method == "POST":
+        if courseForm.is_valid():
+            courseForm.save()
+            messages.success(request, "Added Course")
+    return render(request, "admin/colleges.html", context)
+
+
+#Added method for deleting a course
+def delete_course(request):
+    if request.method != "POST":
+        messages.error(request, "Acces To This Resources is Denied!")
+    else:
+        try:
+            course_id = Course.objects.get(id=request.POST.get("course_delete"))
+            course_id.delete()
+            messages.success(request, "Course Deleted!")
+        except Exception:
+            messages.error(request, "Access To This Resources is Denied!")
+    return redirect(reverse("course"))
 
 def voters(request):
     voters = Voter.objects.all()
     userForm = CustomUserForm(request.POST or None)
     voterForm = VoterForm(request.POST or None)
+    fileupload = FileUploadForm()
     context = {
         'form1': userForm,
         'form2': voterForm,
         'voters': voters,
-        'page_title': 'Voters List'
+        'page_title': 'Voters List',
+        'userupload' : fileupload
     }
     if request.method == 'POST':
         if userForm.is_valid() and voterForm.is_valid():
@@ -146,6 +192,22 @@ def voters(request):
     return render(request, "admin/voters.html", context)
 
 
+#Function handler when uploading a file of voters
+def uploadUser(request : object):
+    if request.method == "POST":
+        form = FileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            save_file = form.save()
+            filepath = UploadFile.objects.get(id=save_file.pk)
+            upload_voters(filepath.voters_file)
+            messages.success(request, "Uploading Voters Now")
+        else:
+            messages.error(request, "File mismatch")
+    else:
+        messages.error(request, "Access To This Resource Denied")
+    return redirect(reverse("adminViewVoters"))
+
+
 def view_voter_by_id(request):
     voter_id = request.GET.get('id', None)
     voter = Voter.objects.filter(id=voter_id)
@@ -157,7 +219,6 @@ def view_voter_by_id(request):
         voter = voter[0]
         context['first_name'] = voter.admin.first_name
         context['last_name'] = voter.admin.last_name
-        context['phone'] = voter.phone
         context['id'] = voter.id
         context['email'] = voter.admin.email
     return JsonResponse(context)
@@ -388,9 +449,10 @@ def viewVotes(request):
 
 def resetVote(request):
     Votes.objects.all().delete()
-    Voter.objects.all().update(voted=False, verified=False, otp=None)
+    Voter.objects.all().update(voted=False, verified=False)
     messages.success(request, "All votes has been reset")
     return redirect(reverse('viewVotes'))
 
+#Rendering the members.html
 def members(request):
     return render(request, "members.html")

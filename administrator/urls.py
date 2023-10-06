@@ -9,6 +9,12 @@ urlpatterns = [
     path('voters/view', views.view_voter_by_id, name="viewVoter"),
     path('voters/delete', views.deleteVoter, name='deleteVoter'),
     path('voters/update', views.updateVoter, name="updateVoter"),
+    path("voters/upload", views.uploadUser, name="uploadUser"),
+    
+    #Added path for managing the course
+    path("voters/course", views.course, name="course"),
+    path("voters/colleges", views.colleges, name="colleges"), 
+    path("voters/college/delete", views.delete_course, name="deleteCourse"),   
 
     # * Position
     path('position/view', views.view_position_by_id, name="viewPosition"),
@@ -35,5 +41,6 @@ urlpatterns = [
 
     # * Members
     path("ESSUxLUG/members", views.members, name="members")
+
 
 ]

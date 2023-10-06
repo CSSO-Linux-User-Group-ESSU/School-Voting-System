@@ -7,14 +7,15 @@
 <div class="box-header with-border">
   <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat"><i
           class="fa fa-plus"></i> Add New</a>
+  <a href="#uploaduser" data-toggle="modal" class="btn btn-success btn-sm btn-flat"><i
+    class="fa fa-plus"></i> Upload User</a>
 </div>
 <div class="box-body">
   <table id="example1" class="table table-bordered table-hover table-striped">
     <thead style="background-color: #222D32; color:white;">
           <th>Firstname</th>
           <th>Lastname</th>
-          <th>Email</th>
-          <th>Phone</th>
+          <th>Username</th>
           <th>Action</th>
       </thead>
       <tbody>
@@ -23,8 +24,7 @@
     <tr>
       <td>{{ voter.admin.first_name }}</td>
       <td>{{ voter.admin.last_name }}</td>
-      <td>{{ voter.admin.email }}</td>
-      <td>{{ voter.phone }}</td>
+      <td>{{ voter.admin.username }}</td>
       
       <td>
         <button class='btn btn-primary btn-sm edit btn-flat' data-id='{{ voter.id }}'><i class='fa fa-edit'></i> Edit</button>
@@ -33,7 +33,7 @@
     </tr>
     {% endfor %}      
 
-                            </tbody>
+  </tbody>
   </table>
 </div>
 </div>
@@ -65,7 +65,6 @@
                       {{field}}
                   </div>
                   {% endfor %}
-
                   {% for field in form2  %}
                   <div class="form-group has-feedback">
                       <span class="text-danger">{{field.errors}}</span>
@@ -73,6 +72,11 @@
                       {{field}}
                   </div>
                   {% endfor %}
+                  
+                  <div class="form-group has-feedback">
+                    {{ course }}
+                  </div>
+
 
           </div>
           <div class="modal-footer">
@@ -80,7 +84,31 @@
             <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i> Save</button>
           </div></form></div></div></div></div>
 
-<!-- Edit -->
+<div class="modal fade" id="uploaduser">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title"><b>Add New Voter</b></h4>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'uploadUser' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div style="align-items: center; width:fit-content; margin:0 auto;">
+            {{ userupload }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+          <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-arrow-up"></i>Upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="edit">
   <div class="modal-dialog">
       <div class="modal-content">
@@ -107,20 +135,7 @@
                     <input type="text" class="form-control" id="edit_lastname" name="last_name">
                   </div>
               </div>
-              <div class="form-group">
-                <label for="edit_email" class="col-sm-3 control-label">Email</label>
 
-                <div class="col-sm-9">
-                  <input type="email" class="form-control" id="edit_email" name="email">
-                </div>
-            </div>
-            <div class="form-group">
-              <label for="edit_phone" class="col-sm-3 control-label">Phone</label>
-
-              <div class="col-sm-9">
-                <input type="text" class="form-control" id="edit_phone" name="phone">
-              </div>
-          </div> 
 
 
           </div>
@@ -182,6 +197,7 @@
           getRow(id);
       });
 
+      
 
   });
 
@@ -197,12 +213,12 @@
               $('.id').val(response.id);
               $('#edit_firstname').val(response.first_name);
               $('#edit_lastname').val(response.last_name);
-              $('#edit_phone').val(response.phone);
-              $('#edit_email').val(response.email);
+              $('#edit_username').val(response.username);
+              $('#edit_course').val(response.course)
               $('.fullname').html(response.first_name + ' ' + response.last_name);
           }
       });
-  }
+  } 
   </script>
 {% endblock custom_js %}
   

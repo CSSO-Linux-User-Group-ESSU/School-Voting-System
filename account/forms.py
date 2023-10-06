@@ -10,8 +10,9 @@ class FormSettings(forms.ModelForm):
             field.field.widget.attrs['class'] = 'form-control'
 
 
+#Changes here are mainly all about email switching to username
 class CustomUserForm(FormSettings):
-    email = forms.EmailField(required=True)
+    username = forms.CharField(required=True)
     # email = forms.EmailField(required=True)
     password = forms.CharField(widget=forms.PasswordInput)
 
@@ -32,20 +33,20 @@ class CustomUserForm(FormSettings):
             self.fields['first_name'].required = True
             self.fields['last_name'].required = True
 
-    def clean_email(self, *args, **kwargs):
-        formEmail = self.cleaned_data['email'].lower()
+    def clean_username(self, *args, **kwargs):
+        formUsername = self.cleaned_data['username'].lower()
         if self.instance.pk is None:  # Insert
-            if CustomUser.objects.filter(email=formEmail).exists():
+            if CustomUser.objects.filter(username=formUsername).exists():
                 raise forms.ValidationError(
-                    "The given email is already registered")
+                    "The given username is already registered")
         else:  # Update
-            dbEmail = self.Meta.model.objects.get(
-                id=self.instance.pk).email.lower()
-            if dbEmail != formEmail:  # There has been changes
-                if CustomUser.objects.filter(email=formEmail).exists():
+            dbUsername = self.Meta.model.objects.get(
+                id=self.instance.pk).username.lower()
+            if dbUsername != formUsername:  # There has been changes
+                if CustomUser.objects.filter(username=formUsername).exists():
                     raise forms.ValidationError(
-                        "The given email is already registered")
-        return formEmail
+                        "The given username is already registered")
+        return formUsername
 
     def clean_password(self):
         password = self.cleaned_data.get("password", None)
@@ -58,4 +59,4 @@ class CustomUserForm(FormSettings):
 
     class Meta:
         model = CustomUser
-        fields = ['last_name', 'first_name', 'email', 'password', ]
+        fields = ['first_name', 'last_name', 'username', 'password' ]

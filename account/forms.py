@@ -12,13 +12,16 @@ class FormSettings(forms.ModelForm):
 
 #Changes here are mainly all about email switching to username
 class CustomUserForm(FormSettings):
-    username = forms.CharField(required=True)
+    username = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'disabled' : 'true'
+        })
+    )   
     # email = forms.EmailField(required=True)
-    password = forms.CharField(widget=forms.PasswordInput)
-
-    widget = {
-        'password': forms.PasswordInput(),
-    }
+    password = forms.CharField(widget=forms.PasswordInput(attrs= {
+        'disabled' : 'true'
+    }))
 
     def __init__(self, *args, **kwargs):
         super(CustomUserForm, self).__init__(*args, **kwargs)
@@ -60,3 +63,11 @@ class CustomUserForm(FormSettings):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'username', 'password' ]
+        widgets = {
+            'first_name' : forms.TextInput(attrs= {
+                'onkeyup' : 'updateUsername()'
+            }),
+            'last_name' : forms.TextInput(attrs= {
+                'onkeyup' : 'updateUsername()'
+            }),
+        }

@@ -97,6 +97,12 @@
         <form action="{% url 'uploadUser' %}" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
           <div style="align-items: center; width:fit-content; margin:0 auto;">
+            <label for="id_voters_file">
+              <div class="voter-upload" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                <img src="../../../static/upload.png" width="100px" height="100px" id="no_upload">
+                <img src="../../../static/uploaded.png" width="100px" height="100px" id="uploaded" style="display: none;">
+              </div>
+            </label>
             {% for up in userupload %}
               {{ up }}
             {% endfor %}
@@ -234,6 +240,35 @@
   function enableForm() {
     $("#id_username").prop('disabled', false)
     $("#id_password").prop('disabled', false)
+  }
+
+  function changeUploadicon() {
+    $("#no_upload").css('display', 'none')
+    $("#uploaded").css('display', 'block')
+  }
+
+  function handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffec = "copy"
+  }
+
+  function handleDrop(event) {
+    event.preventDefault();
+    const files = event.dataTransfer.files;
+
+    // Handle the dropped files (you can use these files as needed)
+    for (let i = 0; i < files.length; i++) {
+      console.log("Dropped file:", files[i]);
+    }
+
+    // You can also trigger the file input to handle the dropped files
+    const fileInput = document.getElementById("id_voters_file");
+    fileInput.files = files;
+
+    // Call your existing function to handle file selection (if needed)
+    
+    $("#no_upload").css('display', 'none')
+    $("#uploaded").css('display', 'block')
   }
   </script>
 {% endblock custom_js %}

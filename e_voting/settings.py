@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'voting.apps.VotingConfig',
     'administrator.apps.AdministratorConfig',
+    'members.apps.MembersConfig'
 ]
 
 MIDDLEWARE = [
@@ -61,7 +62,7 @@ ROOT_URLCONF = 'e_voting.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['voting/templates', 'administrator/templates'],
+        'DIRS': ['voting/templates', 'administrator/templates', 'members/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

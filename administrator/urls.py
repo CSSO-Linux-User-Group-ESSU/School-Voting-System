@@ -39,8 +39,4 @@ urlpatterns = [
     path('votes/reset/', views.resetVote, name='resetVote'),
     path('votes/print/', views.PrintView.as_view(), name='printResult'),    
 
-    # * Members
-    path("ESSUxLUG/members", views.members, name="members")
-
-
 ]

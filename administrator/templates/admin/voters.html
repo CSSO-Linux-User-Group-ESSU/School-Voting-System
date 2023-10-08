@@ -81,7 +81,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
-            <button type="submit" class="btn btn-success btn-flat" name="add"><i class="fa fa-save"></i> Save</button>
+            <button type="submit" class="btn btn-success btn-flat" name="add" onclick="enableForm()"><i class="fa fa-save"></i> Save</button>
           </div></form></div></div></div></div>
 
 <div class="modal fade" id="uploaduser">
@@ -97,7 +97,9 @@
         <form action="{% url 'uploadUser' %}" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
           <div style="align-items: center; width:fit-content; margin:0 auto;">
-            {{ userupload }}
+            {% for up in userupload %}
+              {{ up }}
+            {% endfor %}
           </div>
         </div>
         <div class="modal-footer">
@@ -218,7 +220,21 @@
               $('.fullname').html(response.first_name + ' ' + response.last_name);
           }
       });
-  } 
+  }
+  
+  function updateUsername() {
+    var first_name = document.getElementById("id_first_name").value.trim().replaceAll(" ", "").toLowerCase()
+    var last_name = document.getElementById("id_last_name").value.trim().replaceAll(" ", "").toLowerCase()
+    var student_id = document.getElementById("id_id_number").value.trim().replaceAll(" ", "").toLowerCase()
+    var uname = `${last_name}.${first_name}@${student_id}`
+    $("#id_username").val(uname)
+    $("#id_password").val(student_id)
+  }
+
+  function enableForm() {
+    $("#id_username").prop('disabled', false)
+    $("#id_password").prop('disabled', false)
+  }
   </script>
 {% endblock custom_js %}
   

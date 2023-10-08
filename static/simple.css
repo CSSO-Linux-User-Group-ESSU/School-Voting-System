@@ -104,3 +104,13 @@ table tr td {
     color: white;
     transform: rotateY(180deg);
 }
+
+.voter-upload {
+    width:300px; 
+    height:200px; 
+    border: dashed grey 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

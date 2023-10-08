@@ -9,7 +9,8 @@ class FileUploadForm(forms.ModelForm):
         fields = ['voters_file']
         widgets = {
             'voters_file' : forms.FileInput(attrs={
-                'accept' : '.csv'
+                'accept' : '.csv',
+                'onchange' : 'changeUploadicon()'
             })
         }
 

@@ -10,6 +10,7 @@ import json  # Not used
 from django_renderpdf.views import PDFView
 from django.db.models import Count
 from administrator.voter_upload import upload_voters
+import os
 
 def find_n_winners(data, n):
     """Read More
@@ -199,8 +200,19 @@ def uploadUser(request : object):
         if form.is_valid():
             save_file = form.save()
             filepath = UploadFile.objects.get(id=save_file.pk)
-            upload_voters(filepath.voters_file)
-            messages.success(request, "Uploading Voters Now")
+            try:
+                error_student = upload_voters(filepath.voters_file)
+            except Exception:
+                os.remove(f"./media/{str(filepath.voters_file)}")
+                messages.error(request, "Invalid File Format! Did you ask for a form from CCS?")
+            else:
+                if error_student:
+                    invalid_student = ""
+                    for student in error_student:
+                        invalid_student += f"{student}, "
+                    messages.error(request, f"Invalid Students: {invalid_student}")
+                else:
+                    messages.success(request, "Uploading Voters Now")
         else:
             messages.error(request, "File mismatch")
     else:

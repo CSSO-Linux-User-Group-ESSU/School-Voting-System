@@ -7,11 +7,21 @@ class FileUploadForm(forms.ModelForm):
     class Meta:
         model = UploadFile
         fields = ['voters_file']
+        widgets = {
+            'voters_file' : forms.FileInput(attrs={
+                'accept' : '.csv'
+            })
+        }
 
 class VoterForm(FormSettings):
     class Meta:
         model = Voter
         fields = ['id_number', 'course', 'year_level']
+        widgets = {
+            'id_number' : forms.TextInput(attrs= {
+                'onkeyup' : 'updateUsername()'
+            })
+        }
 
 
 class PositionForm(FormSettings):

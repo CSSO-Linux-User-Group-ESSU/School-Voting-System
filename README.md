@@ -44,6 +44,7 @@ A voting system for CCS.
 # After cloning the repo run on terminal:
 1. `cd CCS-Voting`
 2. Create a virtual environment
+     `pip install venv`
      `python3 -m venv .venv`
 3. Activate Virtual environment
      `source .venv/bin/activate`

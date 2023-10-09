@@ -1,6 +1,25 @@
-{% extends 'root.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
     <!-- TODO -->
     TODO:
         Create an html dedicated for each member of the organization
-{% endblock %}
+</body>
+<footer>
+    <!-- Don'r remove this go back onclick 
+    handler because it's way to go Back
+    Previously whether accessingb as an 
+    admin or as a voter    -->
+    <a href="#" onclick="goBack()">Go Back</a>
+</footer>
+<script>
+    function goBack() {
+        history.back()
+    }
+</script>
+</html>

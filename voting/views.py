@@ -144,7 +144,6 @@ def voted_candidate_form():
     """
     Server-side html creation of voters ballot.
     """
-
     positions = Position.objects.all().order_by('priority') #Database Query
     form = f"""<div class='col-xs-12' id='forda-modal'>
                     <div class='box box-solid'>
@@ -154,15 +153,16 @@ def voted_candidate_form():
                     <div class='voted-body'>"""
     
     for pos in positions: #Iterate over the available position and create an html
-        form += f"""<div class="candidate-name">
-                        <p><b>{pos}</b></p>"""
-        for i in range(pos.max_vote):
-            form += f"""<p class="voted" id='{slugify(pos.name+str(pos.id))}'>• None</p>
-                        <input name='{slugify(pos.name)}' type='hidden'
-                            id='{slugify(pos.name+str(pos.id))}-val'></input>
-                    </div>"""
+        candidate_count = Candidate.objects.filter(position=pos).count()
+        if candidate_count >= 1:
+            form += f"""<div class="candidate-name">
+                            <p><b>{pos}</b></p>"""
+            for _ in range(pos.max_vote):
+                form += f"""<p class="voted" id='{slugify(pos.name+str(pos.id))}'>• None</p>
+                            <input name='{slugify(pos.name)}' type='hidden'
+                                id='{slugify(pos.name+str(pos.id))}-val'></input>
+                        </div>"""
     form += "<a href='#confirm_vote' data-toggle='modal' class='btn btn-success btn-sm btn-flat custom-button' id='cast-modal'>Cast Vote</a></div>"
-    
     return form
 
 def generate_voters_ballot(request):
@@ -181,12 +181,12 @@ def generate_voters_ballot(request):
             next_page = f'<button onClick="load_candidate({page.next_page_number()})">Next Position</button>'
         
         position_name = slugify(position)
-        html+= f"""<div class='col-xs-12'>
-                    <div class='box box-solid' id='{position.id}'>
-                        <div class='box-header with-border'>
-                            <h3 class='box-title'>{position_name.title()}</h3>   
-                        </div>"""
-        if candidates:
+        if candidates.count() >= 1:
+            html+= f"""<div class='col-xs-12'>
+                        <div class='box box-solid' id='{position.id}'>
+                            <div class='box-header with-border'>
+                                <h3 class='box-title'>{position_name.title()}</h3>   
+                            </div>"""
             if position.max_vote > 1:
                 instruction = "You may select up to" + str(position.max_vote) + "candidates"
             else:

@@ -126,7 +126,7 @@ def dashboard(request):
 
 #Added method of adding course
 def colleges(request):
-    collegesForm = DepartmentForm(request.POST)         #Get tge form from forms.py
+    collegesForm = CollegeForm(request.POST)         #Get tge form from forms.py
     if request.method == "POST":                        #Ensuring correct usage
         if collegesForm.is_valid():                     #validate the form
             collegesForm.save()                         #Save to database
@@ -135,17 +135,25 @@ def colleges(request):
             messages.error(request, "Invalid Form")
     return redirect(reverse("course"))
 
+def remove_college(request):
+    if request.method == "POST":
+        college_to_delete = College.objects.get(id=request.POST.get("college"))
+        college_to_delete.delete()
+        messages.success(request, "Deleted")
+    else:
+        messages.error(request, "Access To this Resources is Denied!")
+    return redirect(reverse("course"))
 
 #Added method for adding course and rendering the html
 def course(request):
     colleges = Course.objects.annotate(voter_count=Count('voter')) #Query with the count of voter each course
     courseForm = CourseForm(request.POST or None)
-    departmentForm = DepartmentForm(request.POST or None)
+    collegeForm = CollegeForm(request.POST or None)
     context = {
         'course' : courseForm,
-        'department' : departmentForm,
+        'college' : collegeForm,
         'colleges' : colleges,
-        'page_title' : "Courses/Department"
+        'page_title' : "Courses/college"
     }
 
     if request.method == "POST":

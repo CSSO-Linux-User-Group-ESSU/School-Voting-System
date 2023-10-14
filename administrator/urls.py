@@ -14,7 +14,8 @@ urlpatterns = [
     #Added path for managing the course
     path("voters/course", views.course, name="course"),
     path("voters/colleges", views.colleges, name="colleges"), 
-    path("voters/college/delete", views.delete_course, name="deleteCourse"),   
+    path("voters/course/delete", views.delete_course, name="deleteCourse"),
+    path("voters/college/delete", views.remove_college, name="removeCollege"),   
 
     # * Position
     path('position/view', views.view_position_by_id, name="viewPosition"),

@@ -160,8 +160,8 @@ def voted_candidate_form():
             for _ in range(pos.max_vote):
                 form += f"""<p class="voted" id='{slugify(pos.name+str(pos.id))}'>• None</p>
                             <input name='{slugify(pos.name)}' type='hidden'
-                                id='{slugify(pos.name+str(pos.id))}-val'></input>
-                        </div>"""
+                                id='{slugify(pos.name+str(pos.id))}-val'></input>"""
+                form += "</div>"
     form += "<a href='#confirm_vote' data-toggle='modal' class='btn btn-success btn-sm btn-flat custom-button' id='cast-modal'>Cast Vote</a></div>"
     return form
 
@@ -199,8 +199,8 @@ def generate_voters_ballot(request):
                         position_name+"[]" + '">'
                 else:
                     input_box = f"""<input value='{str(cand.id)}' type='radio' class='flat-red {position_name}' 
-                            name='{position_name}' id='{position_name+str(cand.id)}'
-                            onClick="updateVoted('{paraID}', '{cand.fullname}', '{str(cand.id)}')">"""
+                            name='{position_name}' id='{position_name+str(cand.id)}input'
+                            onClick="updateVoted('{paraID}', '{cand.fullname}', '{str(cand.id)}', '{position_name+str(cand.id)}input')">"""
                 image = '/media/' + str(cand.photo)
                 candidates_html += f"""<li style='text-align:center;'>
                                         <div class='flip-box' id='flip-box{str(cand.id)}'>

@@ -4,15 +4,15 @@ from django import forms
 
 # Create your models here.
 
-class Department(models.Model):
-    department = models.CharField(max_length=100, null=False)
+class College(models.Model):
+    college = models.CharField(max_length=100, null=False)
 
     def __str__(self) -> str:
-        return self.department
+        return self.college
 
 class Course(models.Model):
     course = models.CharField(null=False, max_length=50)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    college = models.ForeignKey(College, on_delete=models.CASCADE)
     
     def __str__(self) -> str:
         return self.course

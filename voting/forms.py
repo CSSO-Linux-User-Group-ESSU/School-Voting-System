@@ -39,7 +39,7 @@ class CandidateForm(FormSettings):
 class CourseForm(FormSettings):
     class Meta:
         model = Course
-        fields = ['course', 'department']
+        fields = ['course', 'college']
 
         widgets = {
             'course' : forms.TextInput(attrs={
@@ -48,13 +48,13 @@ class CourseForm(FormSettings):
         }
 
 
-class DepartmentForm(FormSettings):
+class CollegeForm(FormSettings):
     class Meta:
-        model = Department
-        fields = ['department']
+        model = College
+        fields = ['college']
 
         widgets = {
-            'department' : forms.TextInput(attrs={
+            'college' : forms.TextInput(attrs={
                 'placeholder' : "College of ..."
             })
         }

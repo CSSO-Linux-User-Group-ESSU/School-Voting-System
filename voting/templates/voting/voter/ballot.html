@@ -82,21 +82,59 @@
       });
   });
 
-  function updateVoted(position, word="", candidate_id='') {
+  //Run this function when the page is loaded
+  window.onload = function() {
+    setTimeout(function() {
+      //Get all the keys in the local Storage
+      keys = Object.keys(localStorage)
+      //Itterate over the keys
+      for (let i = 0; i < keys.length; i++) {
+        //Get the data using the keys
+        const localData = JSON.parse(localStorage.getItem(keys[i]))
+        //Update all the elements
+        //Mas maupay kun mahimo in into j query
+        const input = document.getElementById(localData.input_id.replace("#", ""))
+        //Check the candidate button 
+        input.checked = true
+        //Put thr candidate name to voted
+        $(localData.votedForm_id).html(`${localData.cand_name}`)
+        //Add the value to input
+        $(localData.formInputID).val(localData.id_value )
+      }
+    }, 50) //Ayaw in tanggal or bag'uha
+  }
+
+  //Save the data to local storage
+  function localsave(input_id, id_value, cand_name, votedForm_id, formInputID) {
+    const cand_data = {
+                        "input_id" : input_id, 
+                        "id_value" : id_value, 
+                        "cand_name" : cand_name, 
+                        "votedForm_id" : votedForm_id,
+                        "formInputID" : formInputID
+                      }
+    localStorage.setItem(votedForm_id, JSON.stringify(cand_data))
+  }
+
+  //Remove a data from local storage
+  function removeLocalStorage(item_to_remove) {
+    localStorage.removeItem(item_to_remove)
+  }
+
+  function updateVoted(position, word="", candidate_id='', voted_id='') {
     var id = `#${position.trim()}`
     var input_id = `#${position.trim()}-val`
     if (word.trim().length === 0) {
       $(id).html("• None")
       $(input_id).val('')
+      removeLocalStorage(id)
+
     }
     else {
       $(id).html(`• ${word}`)
       $(input_id).val(candidate_id)
+      localsave(voted_id, candidate_id, `• ${word}`, id, input_id);
     }
-  }
-
-  function voteThiscandidate(id, fullname, paraID) {
-    removeVoted(paraID, fullname, id)
   }
 
   function load_candidate(page=1) {
@@ -153,7 +191,7 @@
             <form action="{% url 'submit_ballot' %}" method="POST">
               {% csrf_token %}
               <div id="modalForm" style="display: none;"></div>
-              <button type="submit">Yes</button>
+              <button type="submit" onclick="localStorage.clear()">Yes</button>
             </form>
           </div>
       </div>

@@ -29,6 +29,12 @@ urlpatterns = [
     path('candidate/delete', views.deleteCandidate, name='deleteCandidate'),
     path('candidate/view', views.view_candidate_by_id, name='viewCandidate'),
 
+    # * Election
+    path('election/select', views.viewElections, name="viewElections"),
+    path('election/delete', views.delete_election, name="deleteElection"),
+    path('election/select/id    ', views.election_by_id, name="viewElection"),
+
+
     # * Settings (Ballot Position and Election Title)
     path("settings/ballot/position", views.ballot_position, name='ballot_position'),
     path("settings/ballot/title/", views.ballot_title, name='ballot_title'),

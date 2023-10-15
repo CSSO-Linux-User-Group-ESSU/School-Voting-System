@@ -43,12 +43,27 @@ class Position(models.Model):
     def __str__(self):
         return self.name
 
+class Election(models.Model):
+    class Scope(models.TextChoices):
+        University = 1,
+        College = 2,
+        Program = 3
 
-class Candidate(models.Model):  
-    fullname = models.CharField(max_length=50)
+    title = models.CharField(max_length=50)
+    scope = models.TextField(choices=Scope.choices)
+    started = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.title
+    
+class Candidate(models.Model):
+    
+    fullname = models.ForeignKey(Voter, on_delete=models.CASCADE)
     photo = models.ImageField(upload_to="candidates")
     bio = models.TextField()
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    scope = models.BooleanField(default=False)
 
     def __str__(self):
         return self.fullname
@@ -58,6 +73,7 @@ class Votes(models.Model):
     voter = models.ForeignKey(Voter, on_delete=models.CASCADE)
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+
 
 
 def validate_voter_file(voter_file):

@@ -114,3 +114,12 @@ table tr td {
     align-items: center;
     cursor: pointer;
 }
+
+.election-button {
+    all: unset;
+    cursor: pointer;
+}
+
+.election-button:hover{
+    color: rgb(73, 73, 240);
+}

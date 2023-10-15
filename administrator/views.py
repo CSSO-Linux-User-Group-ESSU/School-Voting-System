@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse, redirect
-from voting.models import Voter, Position, Candidate, Votes
+from voting.models import Voter, Position, Candidate, Votes, Election
 from account.models import CustomUser
 from account.forms import CustomUserForm
 from voting.forms import *
@@ -350,6 +350,48 @@ def viewCandidates(request):
             messages.error(request, "Form errors")
     return render(request, "admin/candidates.html", context)
 
+#For fething all the elections that the database have
+def viewElections(request):
+    electionForm = ElectionForm(request.POST or None)
+    on_going = Election.objects.all().order_by('title')
+    context = {
+        "electionForm" : electionForm,
+        "on_going" : on_going,
+        'page_title' : "Election"
+    }
+    if request.method == "POST":
+        electionForm.save()
+        messages.success(request, "Added")
+    return render(request, "admin/election.html", context)
+
+#For deleting an election instance in the database
+def delete_election(request):
+    if request.method == "POST":
+        try:
+            election = Election.objects.get(id=request.POST.get('id'))
+            election.delete()
+            messages.success(request, "Deleted!")
+        except Exception:
+            messages.error(request, "Form Error!")
+    else:
+        messages.error(request, "Access To This Resource Denied!")
+    return redirect(reverse("viewElections"))
+
+#Fetching single election given an ID of the election
+def election_by_id(request):
+    election_id = request.GET.get('id', None)
+    election = Election.objects.filter(id=election_id)
+    print(election)
+    context = {}
+    if not election.exists():
+        context['code'] = 404
+    else:
+        election = election[0]
+        context['code'] = 200
+        context['title'] = election.title
+        previous = ElectionForm(instance=election)
+        context['form'] = str(previous.as_p())
+    return JsonResponse(context)
 
 def updateCandidate(request):
     if request.method != 'POST':

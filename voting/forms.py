@@ -47,7 +47,6 @@ class CourseForm(FormSettings):
             })
         }
 
-
 class CollegeForm(FormSettings):
     class Meta:
         model = College
@@ -58,3 +57,8 @@ class CollegeForm(FormSettings):
                 'placeholder' : "College of ..."
             })
         }
+
+class ElectionForm(FormSettings):
+    class Meta:
+        model = Election
+        fields = ['title', 'scope']

@@ -12,7 +12,7 @@
           <table id="example1" class="table table-bordered table-hover table-striped">
             <thead style="background-color: #222D32; color:white;">
               <th>Election Name</th>
-              <th>Action</th>
+              <th style="width: 30%;">Action</th>
             </thead>
             <tbody>
              {% for elec in on_going %}  
@@ -20,10 +20,16 @@
                 <td>
                   <form action="{% url 'viewCandidates' %}">
                     <button type="submit" class="election-button">{{ elec.title }}</button>
+                    <input type="hidden" name="id" id="id" value="{{elec.id}}">
                   </form>
                 </td>
                 <td>
-                  <button class='btn btn-danger btn-sm delete btn-flat' data-id='{{ elec.id }}'><i class='fa fa-trash'></i> Delete</button>
+                  <button class='btn btn-danger btn-sm delete btn-flat' data-id='{{ elec.id }}' style="margin-right: 3%;"><i class='fa fa-trash'></i> Delete</button>
+                  {% if elec.started == True %}
+                    <button class='btn btn-success btn-sm stop btn-flat' data-id='{{ elec.id }}'><i class="fa fa-stop"> Stop Election</i></button>
+                  {% else %}
+                    <button class='btn btn-success btn-sm start btn-flat' data-id='{{ elec.id }}'><i class="fa fa-play"> Start Elcetion</i></button>
+                  {% endif %}
                 </td>
               </tr>
               {% endfor %}      
@@ -92,6 +98,57 @@
   </div>
 </div>
 
+<div class="modal fade" id="start">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><b>Starting...</b></h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" method="POST" action="{% url 'startElection' %}">
+              {% csrf_token %}
+              <input type="hidden" class="start_id" name="start_id" id="start_id">
+              <div class="text-center">
+                  <h2 class="bold fullname"> Start Election?</h2>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-flat pull-left" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+            <button type="submit" class='btn btn-success btn-sm start btn-flat' name="start"><i class="fa fa-check"></i> Start</button>
+          </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="stop">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><b>Stopping...</b></h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" method="POST" action="{% url 'stopElection' %}">
+              {% csrf_token %}
+              <input type="hidden" class="stop_id" name="stop_id" id="stop_id">
+              <div class="text-center">
+                  <h2 class="bold fullname"> Are sure to stop this election?</h2>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-flat pull-left" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+            <button type="submit" class='btn btn-success btn-sm start btn-flat' name="start"><i class="fa fa-check"></i> Yes</button>
+          </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+
 {% endblock modal %}
   
 {% block custom_js %}
@@ -104,10 +161,46 @@
           var id = $(this).data('id');
           getRow(id)
       });
-
-
   });
 
+  <!--Di ko aram kay ano di in nadara-->
+  //$(function () {
+  //  $(document).on('click', '.start', function(e) {
+  //    var elecid = $(this).data('id')
+  //    console.log(elecid)
+  //    document.getElementById("start_id").setAttribute('value', elecid)
+  //    $('#start').modal('show')
+  //  })
+  //})
+
+  $(function () {
+    $(document).on('click', '.start', function(e) {
+      var elecid = $(this).data('id');
+      console.log("elecid:", elecid);
+      if (elecid !== undefined) {
+        $('#start_id').val(elecid);
+        $('#start').modal('show');
+      } else {
+        console.log("elecid is undefined.");
+      }
+    });
+  });
+
+  $(function () {
+    $(document).on('click', '.stop', function(e) {
+      var elecid = $(this).data('id');
+      console.log("elecid:", elecid);
+      if (elecid !== undefined) {
+        $('#stop_id').val(elecid);
+        $('#stop').modal('show');
+      } else {
+        console.log("elecid is undefined.");
+      }
+    });
+  });
+
+
+  
   function getRow(id) {
       $.ajax({
           type: 'GET',

@@ -5,8 +5,10 @@
     <div class="col-xs-12">
       <div class="box">
         <div class="box-header with-border">
-          <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat"><i
+          <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat" style="float: right;"><i
           class="fa fa-plus"></i> Add New</a>
+          <a class="btn btn-success btn-sm btn-flat" onclick="goBack()"><i
+            class="fa fa-arrow-left"></i> Back</a>
         </div>
         <div class="box-body">
           <table id="example1" class="table table-bordered table-hover table-striped">
@@ -50,10 +52,8 @@
             <h4 class="modal-title"><b>Add New Candidate</b></h4>
           </div>
           <div class="modal-body">
-            <form class="form-horizontal" enctype="multipart/form-data" method="POST" action="{% url 'viewCandidates' %}">
-              {% csrf_token %}
-
-             
+            <form class="form-horizontal" enctype="multipart/form-data" method="POST" action="{% url 'viewCandidates' %}?id={{election_id.id}}">
+              {% csrf_token %}   
               <div class="modal-body">
                   {% for field in form1  %}
                   <div class="form-group has-feedback">
@@ -62,7 +62,6 @@
                       {{field}}
                   </div>
                   {% endfor %}
-
 
           </div>
           <div class="modal-footer">
@@ -149,6 +148,14 @@
 
 
   });
+
+  function goBack() {
+    history.back();
+  }
+
+  window.onload = setTimeout(function() {
+    document.getElementById("id_election").value = {{election_id.id}}
+  }, 50)
 
   function getRow(id) {
       $.ajax({

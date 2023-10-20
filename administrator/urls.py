@@ -32,7 +32,9 @@ urlpatterns = [
     # * Election
     path('election/select', views.viewElections, name="viewElections"),
     path('election/delete', views.delete_election, name="deleteElection"),
-    path('election/select/id    ', views.election_by_id, name="viewElection"),
+    path('election/select/id', views.election_by_id, name="viewElection"),
+    path('election/start', views.startElection, name="startElection"),
+    path('election/stop', views.stopElection, name="stopElection"),
 
 
     # * Settings (Ballot Position and Election Title)

@@ -25,7 +25,7 @@ class Voter(models.Model):
         Fourth = 4
 
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    verified = models.BooleanField(default=False)
+    mother_maiden_last_name = models.CharField(max_length=20)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     year_level = models.IntegerField(choices=YearLevel.choices)
     voted = models.BooleanField(default=False)
@@ -58,12 +58,15 @@ class Election(models.Model):
     
 class Candidate(models.Model):
     
-    fullname = models.ForeignKey(Voter, on_delete=models.CASCADE)
+    fullname = models.CharField(max_length=50)
     photo = models.ImageField(upload_to="candidates")
     bio = models.TextField()
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
-    scope = models.BooleanField(default=False)
+    representative = models.BooleanField(default=False, choices=[
+        (True, "Yes"),
+        (False, "No")
+    ])
 
     def __str__(self):
         return self.fullname
@@ -73,7 +76,6 @@ class Votes(models.Model):
     voter = models.ForeignKey(Voter, on_delete=models.CASCADE)
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-
 
 
 def validate_voter_file(voter_file):

@@ -34,7 +34,15 @@ class PositionForm(FormSettings):
 class CandidateForm(FormSettings):
     class Meta:
         model = Candidate
-        fields = ['fullname', 'bio', 'position', 'photo']
+        fields = ['fullname', 'bio', 'position', 'photo', 'election', 'position', 'representative']
+        widgets = {
+            'election' : forms.TextInput(attrs={
+                'type' : 'hidden'
+            })
+        }
+        labels = {
+            'election' : ''
+        }
 
 class CourseForm(FormSettings):
     class Meta:

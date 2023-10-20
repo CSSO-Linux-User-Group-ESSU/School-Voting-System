@@ -320,7 +320,6 @@ def updatePosition(request):
 
     return redirect(reverse('viewPositions'))
 
-
 def deletePosition(request):
     if request.method != 'POST':
         messages.error(request, "Access Denied")
@@ -332,23 +331,6 @@ def deletePosition(request):
         messages.error(request, "Access To This Resource Denied")
 
     return redirect(reverse('viewPositions'))
-
-
-def viewCandidates(request):
-    candidates = Candidate.objects.all()
-    form = CandidateForm(request.POST or None, request.FILES or None)
-    context = {
-        'candidates': candidates,
-        'form1': form,
-        'page_title': 'Candidates'
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            form = form.save()
-            messages.success(request, "New Candidate Created")
-        else:
-            messages.error(request, "Form errors")
-    return render(request, "admin/candidates.html", context)
 
 #For fething all the elections that the database have
 def viewElections(request):
@@ -381,7 +363,6 @@ def delete_election(request):
 def election_by_id(request):
     election_id = request.GET.get('id', None)
     election = Election.objects.filter(id=election_id)
-    print(election)
     context = {}
     if not election.exists():
         context['code'] = 404
@@ -392,6 +373,49 @@ def election_by_id(request):
         previous = ElectionForm(instance=election)
         context['form'] = str(previous.as_p())
     return JsonResponse(context)
+
+def startElection(request):
+    if request.method != "POST":
+        messages.error(request, "Access To This Resources Denied!")
+    else:
+        started = Election.objects.filter(started=True).count()
+        if started >= 1:
+            messages.error(request, "An Election is on-going!")
+        else:
+            Election.objects.filter(id=request.POST.get("start_id")).update(
+                started=True
+            )
+            messages.success(request, f"{str(Election.objects.get('start_id'))} Election Started.")
+        
+    return redirect(reverse("viewElections"))
+
+def stopElection(request):
+    if request.method != "POST":
+        messages.error(request, "Access To This Resources Denied!")
+    else:
+        Election.objects.filter(id=request.POST.get("stop_id")).update(
+            started=False
+        )
+        messages.success(request, "You can now start another election.")
+    return redirect(reverse("viewElections"))
+
+def viewCandidates(request):
+    form = CandidateForm(request.POST or None, request.FILES or None)
+    election_id = Election.objects.get(id=request.GET.get("id"))
+    candidates = Candidate.objects.filter(election=election_id)
+    context = {
+        'candidates': candidates,
+        'form1': form,
+        'page_title': 'Candidates',
+        'election_id' : election_id
+    }
+    if request.method == 'POST':
+        if form.is_valid():
+            form = form.save()
+            messages.success(request, "New Candidate Created")
+        else:
+            messages.error(request, "Form errors")
+    return render(request, "admin/candidates.html", context)
 
 def updateCandidate(request):
     if request.method != 'POST':
@@ -409,7 +433,7 @@ def updateCandidate(request):
     except:
         messages.error(request, "Access To This Resource Denied")
 
-    return redirect(reverse('viewCandidates'))
+    return redirect(reverse('viewCandidates') + f'?={candidate.election.id}')
 
 
 def deleteCandidate(request):
@@ -422,7 +446,7 @@ def deleteCandidate(request):
     except:
         messages.error(request, "Access To This Resource Denied")
 
-    return redirect(reverse('viewCandidates'))
+    return redirect(reverse('viewCandidates') + f'?id={pos.election.id}')
 
 
 def view_candidate_by_id(request):
@@ -511,6 +535,6 @@ def viewVotes(request):
 
 def resetVote(request):
     Votes.objects.all().delete()
-    Voter.objects.all().update(voted=False, verified=False)
+    Voter.objects.all().update(voted=False)
     messages.success(request, "All votes has been reset")
     return redirect(reverse('viewVotes'))

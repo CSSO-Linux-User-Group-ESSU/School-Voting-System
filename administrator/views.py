@@ -385,7 +385,8 @@ def startElection(request):
             Election.objects.filter(id=request.POST.get("start_id")).update(
                 started=True
             )
-            messages.success(request, f"{str(Election.objects.get('start_id'))} Election Started.")
+            title = Election.objects.get(id=request.POST.get("start_id"))
+            messages.success(request, f"{title.title} Election Started.")
         
     return redirect(reverse("viewElections"))
 
@@ -401,7 +402,14 @@ def stopElection(request):
 
 def viewCandidates(request):
     form = CandidateForm(request.POST or None, request.FILES or None)
-    election_id = Election.objects.get(id=request.GET.get("id"))
+    try:
+        election_id = Election.objects.get(id=request.GET.get("id"))
+    except Exception:
+        if Election.objects.filter(started = True).count() <= 0:
+            messages.error(request, "No election have started")
+            return redirect(reverse("adminDashboard"))
+        else:
+            election_id = Election.objects.get(started=True)
     candidates = Candidate.objects.filter(election=election_id)
     context = {
         'candidates': candidates,
@@ -411,8 +419,15 @@ def viewCandidates(request):
     }
     if request.method == 'POST':
         if form.is_valid():
-            form = form.save()
-            messages.success(request, "New Candidate Created")
+            try:
+                Voter.objects.get(id_number=request.POST.get("student_id"))
+            except Exception:
+                messages.error(request, "Student don't exist!")
+            else:
+                form = form.save(commit=False)
+                form.election = election_id
+                form.save()
+                messages.success(request, "New Candidate Created")
         else:
             messages.error(request, "Form errors")
     return render(request, "admin/candidates.html", context)

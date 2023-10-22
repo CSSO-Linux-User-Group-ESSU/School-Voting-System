@@ -12,6 +12,7 @@
           <table id="example1" class="table table-bordered table-hover table-striped">
             <thead style="background-color: #222D32; color:white;">
               <th>Election Name</th>
+              <th>Scope</th>
               <th style="width: 30%;">Action</th>
             </thead>
             <tbody>
@@ -22,6 +23,15 @@
                     <button type="submit" class="election-button">{{ elec.title }}</button>
                     <input type="hidden" name="id" id="id" value="{{elec.id}}">
                   </form>
+                </td>
+                <td>
+                  {% if elec.scope == "1" %}
+                    University
+                  {% elif elec.scope == "2" %}
+                    {{ elec.college_limit }}
+                  {% elif elec.scope == "3" %}
+                    {{ elec.course_limit }} - {{ elec.year_level_limit }}
+                  {% endif %}
                 </td>
                 <td>
                   <button class='btn btn-danger btn-sm delete btn-flat' data-id='{{ elec.id }}' style="margin-right: 3%;"><i class='fa fa-trash'></i> Delete</button>
@@ -154,6 +164,33 @@
 {% block custom_js %}
   
 <script>
+  window.onload = function() {
+    $("#id_college_limit").css('display', 'none')
+    $("#id_course_limit").css('display', 'none')
+    $("#id_year_level_limit").css('display', 'none')
+  }
+
+  $(function() {
+    $(document).on('change', '#id_scope', function() {
+      var selected = $(this).val()
+      if (+selected == 1) {
+        $("#id_college_limit").css('display', 'none')
+        $("#id_course_limit").css('display', 'none')
+        $("#id_year_level_limit").css('display', 'none')
+      }
+      else if (+selected === 2) {
+        $("#id_college_limit").css('display', 'block')
+        $("#id_course_limit").css('display', 'none')
+        $("#id_year_level_limit").css('display', 'none')
+      }
+      else if (+selected === 3) {
+        $("#id_course_limit").css('display', 'block')
+        $("#id_year_level_limit").css('display', 'block')
+        $("#id_college_limit").css('display', 'none')
+      }
+    })
+  })
+
   $(function() {
       $(document).on('click', '.delete', function(e) {
           e.preventDefault();
@@ -198,8 +235,6 @@
       }
     });
   });
-
-
   
   function getRow(id) {
       $.ajax({

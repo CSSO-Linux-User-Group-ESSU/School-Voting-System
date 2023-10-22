@@ -7,7 +7,7 @@
         <div class="box-header with-border">
           <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat" style="float: right;"><i
           class="fa fa-plus"></i> Add New</a>
-          <a class="btn btn-success btn-sm btn-flat" onclick="goBack()"><i
+          <a href="{% url 'viewElections' %}" class="btn btn-success btn-sm btn-flat"><i
             class="fa fa-arrow-left"></i> Back</a>
         </div>
         <div class="box-body">
@@ -148,14 +148,6 @@
 
 
   });
-
-  function goBack() {
-    history.back();
-  }
-
-  window.onload = setTimeout(function() {
-    document.getElementById("id_election").value = {{election_id.id}}
-  }, 50)
 
   function getRow(id) {
       $.ajax({

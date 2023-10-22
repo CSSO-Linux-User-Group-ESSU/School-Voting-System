@@ -19,10 +19,10 @@ class Course(models.Model):
 
 class Voter(models.Model):
     class YearLevel(models.IntegerChoices):
-        First = 1,
-        Second = 2,
-        Third = 3,
-        Fourth = 4
+        First = 1, "First"
+        Second = 2, "Second"
+        Third = 3,  "Third"
+        Fourth = 4 , "Fourth"
 
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     mother_maiden_last_name = models.CharField(max_length=20)
@@ -31,6 +31,10 @@ class Voter(models.Model):
     voted = models.BooleanField(default=False)
     id_number = models.CharField(null=True, max_length=20)
 
+    def save(self, *args, **kwargs):
+        self.id = str(self.admin.id)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.admin.last_name + ", " + self.admin.first_name
 
@@ -38,6 +42,10 @@ class Voter(models.Model):
 class Position(models.Model):
     name = models.CharField(max_length=50, unique=True)
     max_vote = models.IntegerField()
+    representative = models.BooleanField(default=False, choices=[
+        (True, "Yes"),
+        (False, "No")
+    ])
     priority = models.IntegerField()
 
     def __str__(self):
@@ -45,13 +53,16 @@ class Position(models.Model):
 
 class Election(models.Model):
     class Scope(models.TextChoices):
-        University = 1,
+        University = 1, 
         College = 2,
         Program = 3
 
     title = models.CharField(max_length=50)
     scope = models.TextField(choices=Scope.choices)
     started = models.BooleanField(default=False)
+    college_limit = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
+    course_limit = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    year_level_limit = models.IntegerField(choices=Voter.YearLevel.choices, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.title
@@ -59,14 +70,11 @@ class Election(models.Model):
 class Candidate(models.Model):
     
     fullname = models.CharField(max_length=50)
+    student_id = models.CharField(max_length=10)
     photo = models.ImageField(upload_to="candidates")
     bio = models.TextField()
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
-    representative = models.BooleanField(default=False, choices=[
-        (True, "Yes"),
-        (False, "No")
-    ])
 
     def __str__(self):
         return self.fullname

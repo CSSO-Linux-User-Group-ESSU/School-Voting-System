@@ -92,36 +92,54 @@ class PrintView(PDFView):
 
 
 def dashboard(request):
-    positions = Position.objects.all().order_by('priority')
-    candidates = Candidate.objects.all()
-    voters = Voter.objects.all()
-    voted_voters = Voter.objects.filter(voted=1)
-    list_of_candidates = []
-    votes_count = []
-    chart_data = {}
-
-    for position in positions:
+    active_election = Election.objects.filter(started=True)
+    if not active_election:
+        context = {
+            'position_count': 0,
+            'candidate_count': 0,
+            'voters_count': 0,
+            'voted_voters_count': 0,
+            'positions': [],
+            'chart_data': {},
+            'page_title': "Dashboard"
+        }
+    else:
+        positions : Position = Position.objects.filter(candidate__election_id=active_election[0]).distinct().order_by('priority')
+        candidates = Candidate.objects.filter(election=active_election)
+        if active_election.scope == "1":
+            voters = Voter.objects.all()
+            voted_voters = Voter.objects.filter(voted=1)
+        elif active_election.scope == "2":
+            voters = Voter.objects.filter(course__college=active_election.college_limit)
+            voted_voters = Voter.objects.filter(course__college=active_election.college_limit,voted=1)
+        elif active_election.scope == "3":
+            voters = Voter.objects.filter(course=active_election.course_limit, year_level=active_election.year_level_limit)
+            voted_voters = Voter.objects.filter(course=active_election.course_limit, year_level=active_election.year_level_limit, voted=1)
         list_of_candidates = []
         votes_count = []
-        for candidate in Candidate.objects.filter(position=position):
-            list_of_candidates.append(candidate.fullname)
-            votes = Votes.objects.filter(candidate=candidate).count()
-            votes_count.append(votes)
-        chart_data[position] = {
-            'candidates': list_of_candidates,
-            'votes': votes_count,
-            'pos_id': position.id
-        }
+        chart_data = {}
 
-    context = {
-        'position_count': positions.count(),
-        'candidate_count': candidates.count(),
-        'voters_count': voters.count(),
-        'voted_voters_count': voted_voters.count(),
-        'positions': positions,
-        'chart_data': chart_data,
-        'page_title': "Dashboard"
-    }
+        for position in positions:
+            list_of_candidates = []
+            votes_count = []
+            for candidate in Candidate.objects.filter(position=position, election=active_election):
+                list_of_candidates.append(candidate.fullname)
+                votes = Votes.objects.filter(candidate=candidate).count()
+                votes_count.append(votes)
+            chart_data[position] = {
+                'candidates': list_of_candidates,
+                'votes': votes_count,
+                'pos_id': position.id
+            }
+        context = {
+            'position_count': positions.count(),
+            'candidate_count': candidates.count(),
+            'voters_count': voters.count(),
+            'voted_voters_count': voted_voters.count(),
+            'positions': positions,
+            'chart_data': chart_data,
+            'page_title': "Dashboard"
+        }
     return render(request, "admin/home.html", context)
 
 #Added method of adding course

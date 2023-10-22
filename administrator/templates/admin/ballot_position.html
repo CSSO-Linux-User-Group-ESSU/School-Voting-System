@@ -73,7 +73,7 @@
       url: '{% url "fetch_ballot" %}',
       dataType: 'json',
       success: function(response){
-        $('#contenty').html(response.html).iCheck({checkboxClass: 'icheckbox_flat-green',radioClass: 'iradio_flat-green'});
+        $('#contenty').html(response).iCheck({checkboxClass: 'icheckbox_flat-green',radioClass: 'iradio_flat-green'});
       }
     });
   }

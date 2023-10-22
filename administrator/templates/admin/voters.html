@@ -13,8 +13,8 @@
 <div class="box-body">
   <table id="example1" class="table table-bordered table-hover table-striped">
     <thead style="background-color: #222D32; color:white;">
-          <th>Firstname</th>
-          <th>Lastname</th>
+          <th>Fullname</th>
+          <th>Course</th>
           <th>Username</th>
           <th>Action</th>
       </thead>
@@ -22,8 +22,8 @@
     {% for voter in voters %}
       
     <tr>
-      <td>{{ voter.admin.first_name }}</td>
-      <td>{{ voter.admin.last_name }}</td>
+      <td>{{ voter.admin.last_name }}, {{ voter.admin.first_name }}</td>
+      <td>{{ voter.course }}-{{ voter.year_level }}</td>
       <td>{{ voter.admin.username }}</td>
       
       <td>
@@ -230,11 +230,11 @@
   
   function updateUsername() {
     var first_name = document.getElementById("id_first_name").value.trim().replaceAll(" ", "").toLowerCase()
-    var last_name = document.getElementById("id_last_name").value.trim().replaceAll(" ", "").toLowerCase()
     var student_id = document.getElementById("id_id_number").value.trim().replaceAll(" ", "").toLowerCase()
-    var uname = `${first_name}.${student_id}`
+    var mother_last_name = document.getElementById("id_mother_maiden_last_name").value.trim().replaceAll(" ", "").toLowerCase()
+    var uname = `${first_name}.${mother_last_name}`
     $("#id_username").val(uname)
-    $("#id_password").val(student_id)
+    $("#id_password").val(`${student_id}.${mother_last_name}`)
   }
 
   function enableForm() {

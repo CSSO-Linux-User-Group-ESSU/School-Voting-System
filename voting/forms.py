@@ -17,9 +17,12 @@ class FileUploadForm(forms.ModelForm):
 class VoterForm(FormSettings):
     class Meta:
         model = Voter
-        fields = ['id_number', 'course', 'year_level']
+        fields = ["mother_maiden_last_name", 'id_number', 'course', 'year_level']
         widgets = {
             'id_number' : forms.TextInput(attrs= {
+                'onkeyup' : 'updateUsername()'
+            }),
+            'mother_maiden_last_name' : forms.TextInput(attrs= {
                 'onkeyup' : 'updateUsername()'
             })
         }
@@ -28,21 +31,16 @@ class VoterForm(FormSettings):
 class PositionForm(FormSettings):
     class Meta:
         model = Position
-        fields = ['name', 'max_vote']
+        fields = ['name', 'max_vote', 'representative']
+        labels = {
+            "representative" : "Choose Yes if it is a Representative."
+        }
 
 
 class CandidateForm(FormSettings):
     class Meta:
         model = Candidate
-        fields = ['fullname', 'bio', 'position', 'photo', 'election', 'position', 'representative']
-        widgets = {
-            'election' : forms.TextInput(attrs={
-                'type' : 'hidden'
-            })
-        }
-        labels = {
-            'election' : ''
-        }
+        fields = ['fullname', 'student_id', 'bio', 'position', 'photo', 'position']
 
 class CourseForm(FormSettings):
     class Meta:
@@ -69,4 +67,5 @@ class CollegeForm(FormSettings):
 class ElectionForm(FormSettings):
     class Meta:
         model = Election
-        fields = ['title', 'scope']
+        fields = ['title', 'scope', 'college_limit', 'course_limit', 'year_level_limit']
+        

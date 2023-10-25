@@ -5,8 +5,10 @@
     <div class="col-xs-12">
       <div class="box">
         <div class="box-header with-border">
-          <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat" style="float: right;"><i
-          class="fa fa-plus"></i> Add New</a>
+          {% if election_id %}
+            <a href="#addnew" data-toggle="modal" class="btn btn-success btn-sm btn-flat" style="float: right;"><i
+            class="fa fa-plus"></i> Add New</a>
+          {% endif %}
           <a href="{% url 'viewElections' %}" class="btn btn-success btn-sm btn-flat"><i
             class="fa fa-arrow-left"></i> Back</a>
         </div>

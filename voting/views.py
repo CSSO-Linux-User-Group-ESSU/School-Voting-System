@@ -211,7 +211,7 @@ def generate_voters_ballot(request : object):
                 elif election_id.scope == "3":
                     if user_data.year_level != candidate_data.year_level:
                         continue
-            paraID : str = slugify(position_name+str(position.max_vote))
+            paraID : str = slugify(position_name+str(position.id))
             if position.max_vote > 1:
                 input_box = '<input type="checkbox" value="'+str(cand.id)+'" class="flat-red ' + \
                     position_name+'" name="' + \

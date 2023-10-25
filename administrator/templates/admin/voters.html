@@ -17,8 +17,8 @@
           <th>Course</th>
           <th>Username</th>
           <th>Action</th>
-      </thead>
-      <tbody>
+    </thead>
+    <tbody>
     {% for voter in voters %}
       
     <tr>
@@ -190,6 +190,22 @@
 {% block custom_js %}
   
 <script>
+  //$(document).ready(function() {
+  //  setTimeout(function() {
+  //        const params = window.location.search
+  //        const urlParams = new URLSearchParams(params).get("search")
+  //        if (urlParams !== "all") {
+  //          document.querySelector('input[type="search"].form-control.input-sm').setAttribute('value', "hello")
+  //          console.log(document.querySelector('input[type="search"].form-control.input-sm'))
+  //          console.log("done")
+  //        }
+  //    }, 50)
+  //  
+  //    let table = $("#example1_filter").DataTable()
+  //})
+  //window.onload = function() {
+  //  
+  //}
   $(function() {
       $(document).on('click', '.edit', function(e) {
           e.preventDefault();

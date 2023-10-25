@@ -43,8 +43,8 @@
             <div class="icon">
               <i class="fa fa-users"></i>
             </div>
-            <a href="{% url 'adminViewVoters' %}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
+              <a href="{% url 'adminViewVoters' %}?search={{search}}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
         </div>
         <!-- ./col -->
         <div class="col-lg-3 col-xs-6">
@@ -63,15 +63,29 @@
         <!-- ./col -->
       </div>
 
-      <div class="row">
-        <div class="col-xs-12">
-          <h3>Votes Tally
-            <span class="pull-right">
-              <a href="{% url 'printResult' %}" class="btn btn-success btn-sm btn-flat"><span class="glyphicon glyphicon-print"></span> Print/Download PDF <i class="fa fa-download"></i></a>
-            </span>
-          </h3>
+      {% if has_election %}
+        <div class="row">
+          <div class="col-xs-12">
+            <h3>Votes Tally for {{ election_title }}
+              <span class="pull-right">
+                <a href="{% url 'printResult' %}" class="btn btn-success btn-sm btn-flat"><span class="glyphicon glyphicon-print"></span> Print/Download PDF <i class="fa fa-download"></i></a>
+              </span>
+            </h3>
+          </div>
         </div>
-      </div>
+      {% else %}
+        <div class="row">
+          <div class="col-xs-12">
+            <h3></h3>
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <div>
+            <h3>No active election!</h3>
+            <img src="../../../static/sad.png" width="20%" height="20%^">
+          </div>
+        </div>
+      {% endif %}
 
      {% for position in positions %}
      {% if not forloop.counter|divisibleby:2 %}

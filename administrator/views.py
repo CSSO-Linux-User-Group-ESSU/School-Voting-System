@@ -93,36 +93,35 @@ class PrintView(PDFView):
 
 def dashboard(request):
     active_election = Election.objects.filter(started=True)
+    context = {}
+    chart_data = {}
+    search = "all"
     if not active_election:
-        context = {
-            'position_count': 0,
-            'candidate_count': 0,
-            'voters_count': 0,
-            'voted_voters_count': 0,
-            'positions': [],
-            'chart_data': {},
-            'page_title': "Dashboard"
-        }
+        positions : Position = Position.objects.all()
+        candidates = Candidate.objects.all()
+        voters = Voter.objects.all()
+        voted_voters = Voter.objects.filter(voted=1)
+        context["has_election"] = False
+        context["positions"] = []
     else:
         positions : Position = Position.objects.filter(candidate__election_id=active_election[0]).distinct().order_by('priority')
-        candidates = Candidate.objects.filter(election=active_election)
-        if active_election.scope == "1":
+        candidates = Candidate.objects.filter(election=active_election[0])
+        if active_election[0].scope == "1":
             voters = Voter.objects.all()
             voted_voters = Voter.objects.filter(voted=1)
-        elif active_election.scope == "2":
-            voters = Voter.objects.filter(course__college=active_election.college_limit)
-            voted_voters = Voter.objects.filter(course__college=active_election.college_limit,voted=1)
-        elif active_election.scope == "3":
-            voters = Voter.objects.filter(course=active_election.course_limit, year_level=active_election.year_level_limit)
-            voted_voters = Voter.objects.filter(course=active_election.course_limit, year_level=active_election.year_level_limit, voted=1)
-        list_of_candidates = []
-        votes_count = []
-        chart_data = {}
+        elif active_election[0].scope == "2":
+            voters = Voter.objects.filter(course__college=active_election[0].college_limit)
+            voted_voters = Voter.objects.filter(course__college=active_election[0].college_limit,voted=1)
+            search = active_election[0].course_limit
+        elif active_election[0].scope == "3":
+            voters = Voter.objects.filter(course=active_election[0].course_limit, year_level=active_election[0].year_level_limit)
+            voted_voters = Voter.objects.filter(course=active_election[0].course_limit, year_level=active_election[0].year_level_limit, voted=1)
+            search = f"{active_election[0].course_limit}-{active_election[0].year_level_limit}"
 
         for position in positions:
             list_of_candidates = []
             votes_count = []
-            for candidate in Candidate.objects.filter(position=position, election=active_election):
+            for candidate in Candidate.objects.filter(position=position, election=active_election[0]):
                 list_of_candidates.append(candidate.fullname)
                 votes = Votes.objects.filter(candidate=candidate).count()
                 votes_count.append(votes)
@@ -131,15 +130,17 @@ def dashboard(request):
                 'votes': votes_count,
                 'pos_id': position.id
             }
-        context = {
-            'position_count': positions.count(),
-            'candidate_count': candidates.count(),
-            'voters_count': voters.count(),
-            'voted_voters_count': voted_voters.count(),
-            'positions': positions,
-            'chart_data': chart_data,
-            'page_title': "Dashboard"
-        }
+        context["has_election"] = True
+        context["positions"] = positions
+        context["election_title"] = str(active_election[0]).title()
+   
+    context["search"] = search
+    context["position_count"] = positions.count()  
+    context["voters_count"] = voters.count()
+    context['candidate_count'] = candidates.count()
+    context["voted_voters_count"] = voted_voters.count() 
+    context["chart_data"] = chart_data
+    context['page_title'] = "Dashboard"
     return render(request, "admin/home.html", context)
 
 #Added method of adding course
@@ -195,7 +196,8 @@ def delete_course(request):
     return redirect(reverse("course"))
 
 def voters(request):
-    voters = Voter.objects.all()
+    ordering = ["course", "year_level", "admin"]
+    voters = Voter.objects.all().order_by(*ordering)
     userForm = CustomUserForm(request.POST or None)
     voterForm = VoterForm(request.POST or None)
     fileupload = FileUploadForm()
@@ -424,11 +426,12 @@ def viewCandidates(request):
         election_id = Election.objects.get(id=request.GET.get("id"))
     except Exception:
         if Election.objects.filter(started = True).count() <= 0:
-            messages.error(request, "No election have started")
-            return redirect(reverse("adminDashboard"))
-        else:
-            election_id = Election.objects.get(started=True)
-    candidates = Candidate.objects.filter(election=election_id)
+            messages.success(request, "Viewing all candidates.")
+            candidates = Candidate.objects.all()
+            election_id = False
+    else:
+        candidates = Candidate.objects.filter(election=election_id)
+
     context = {
         'candidates': candidates,
         'form1': form,

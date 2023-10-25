@@ -14,10 +14,10 @@ def upload_voters(filepath : str) -> None:
             for user in users:
                 user_course = Course.objects.get(course=user["Course"])
                 year_level = Voter.YearLevel[user['Year']]
-                uname = f"{str(user['Last Name']).lower()}.{str(user['First Name']).lower().replace(' ', '')}@{str(user['ID Number'])}"
+                uname = f"{user['mother Maiden Last Name']}.{user['ID Number']}"
             
                 userObj = CustomUser.objects.create(
-                        password = make_password(user["ID Number"]),
+                        password = make_password(uname),
                         first_name = user["First Name"],
                         last_name = user["Last Name"],
                         username = uname

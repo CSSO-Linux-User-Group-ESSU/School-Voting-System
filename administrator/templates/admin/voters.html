@@ -15,6 +15,7 @@
     <thead style="background-color: #222D32; color:white;">
           <th>Fullname</th>
           <th>Course</th>
+          <th style="display:none">College</th>
           <th>Username</th>
           <th>Action</th>
     </thead>
@@ -24,6 +25,7 @@
     <tr>
       <td>{{ voter.admin.last_name }}, {{ voter.admin.first_name }}</td>
       <td>{{ voter.course }}-{{ voter.year_level }}</td>
+      <th style="display: none;">{{ voter.course.college }}</th>
       <td>{{ voter.admin.username }}</td>
       
       <td>
@@ -190,22 +192,26 @@
 {% block custom_js %}
   
 <script>
-  //$(document).ready(function() {
-  //  setTimeout(function() {
-  //        const params = window.location.search
-  //        const urlParams = new URLSearchParams(params).get("search")
-  //        if (urlParams !== "all") {
-  //          document.querySelector('input[type="search"].form-control.input-sm').setAttribute('value', "hello")
-  //          console.log(document.querySelector('input[type="search"].form-control.input-sm'))
-  //          console.log("done")
-  //        }
-  //    }, 50)
-  //  
-  //    let table = $("#example1_filter").DataTable()
-  //})
-  //window.onload = function() {
-  //  
-  //}
+  $(document).ready(function() {
+    const params = window.location.search
+    const urlParams = new URLSearchParams(params).get("search")
+    if (urlParams === "all") {
+      urlParams =""
+    }
+
+    var table = $('#example1').DataTable();
+    table.destroy(); // Destroy the existing DataTable
+
+    $('#example1').DataTable({
+        "order": [
+            [1, 'asc'], // Sort by the Course column (index 1) in ascending order
+            [0, 'asc']  // Then sort by the Fullname column (index 0) in ascending order
+        ],
+        "search" : {
+          "search" : urlParams
+        }
+    });
+  });
   $(function() {
       $(document).on('click', '.edit', function(e) {
           e.preventDefault();

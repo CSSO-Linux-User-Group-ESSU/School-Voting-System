@@ -112,7 +112,7 @@ def dashboard(request):
         elif active_election[0].scope == "2":
             voters = Voter.objects.filter(course__college=active_election[0].college_limit)
             voted_voters = Voter.objects.filter(course__college=active_election[0].college_limit,voted=1)
-            search = active_election[0].course_limit
+            search = active_election[0].college_limit
         elif active_election[0].scope == "3":
             voters = Voter.objects.filter(course=active_election[0].course_limit, year_level=active_election[0].year_level_limit)
             voted_voters = Voter.objects.filter(course=active_election[0].course_limit, year_level=active_election[0].year_level_limit, voted=1)

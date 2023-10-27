@@ -15,20 +15,29 @@
     <!-- sidebar menu: : style can be found in sidebar.less -->
     <ul class="sidebar-menu" data-widget="tree">
       {% if request.user.user_type == '1' %}
-  
-      
-      <li class="header">REPORTS</li>
-      <li class=""><a href="{% url 'adminDashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-      <li class=""><a href="{% url 'viewVotes' %}"><span class="glyphicon glyphicon-lock"></span> <span>Votes</span></a></li>
-      <li class="header">MANAGE</li>
-      <li class=""><a href="{% url 'colleges' %}"><i class="fa fa-university"></i> <span>Colleges</span></a></li>
-      <li class=""><a href="{% url 'adminViewVoters' %}"><i class="fa fa-users"></i> <span>Voters</span></a></li>
-      <li class=""><a href="{% url 'viewPositions' %}"><i class="fa fa-tasks"></i> <span>Positions</span></a></li>
-      <li class=""><a href="{% url 'viewElections' %}"><i class="fa fa-black-tie"></i> <span>Election</span></a></li>
-      <li class="header">SETTINGS</li>
-      <li class=""><a href="{% url 'ballot_position' %}"><i class="fa fa-file-text"></i> <span>Ballot Position</span></a></li>
-      <li class=""><a href="#config" data-toggle="modal"><i class="fa fa-font"></i> <span>Election Title</span></a></li>
-            
+        <li class="header">REPORTS</li>
+        <li class=""><a href="{% url 'adminDashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+        <li class=""><a href="{% url 'viewVotes' %}"><span class="glyphicon glyphicon-lock"></span> <span>Votes</span></a></li>
+        <li class="header">MANAGE</li>
+        <li class=""><a href="{% url 'colleges' %}"><i class="fa fa-university"></i> <span>Colleges</span></a></li>
+        <li class=""><a href="{% url 'adminViewVoters' %}?search=all"><i class="fa fa-users"></i> <span>Voters</span></a></li>
+        <li class=""><a href="{% url 'viewPositions' %}"><i class="fa fa-tasks"></i> <span>Positions</span></a></li>
+        <li class=""><a href="{% url 'viewElections' %}"><i class="fa fa-black-tie"></i> <span>Election</span></a></li>
+        <li class="header">Committee</li>
+        <li class=""><a href="{% url 'committee' %}"><i class="fa fa-users"></i> <span>Committee</span></i></a></li>
+        <li class="header">SETTINGS</li>
+        <li class=""><a href="{% url 'ballot_position' %}"><i class="fa fa-file-text"></i> <span>Ballot Position</span></a></li>
+        <li class=""><a href="#config" data-toggle="modal"><i class="fa fa-font"></i> <span>Election Title</span></a></li>
+      {% elif request.user.user_type == "2" %}   
+        <li class="header">REPORTS</li>
+        <li class=""><a href="{% url 'adminDashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+        <li class=""><a href="{% url 'viewVotes' %}"><span class="glyphicon glyphicon-lock"></span> <span>Votes</span></a></li>
+        <li class="header">MANAGE</li>
+        <li class=""><a href="{% url 'adminViewVoters' %}?search=all"><i class="fa fa-users"></i> <span>Voters</span></a></li>
+        <li class=""><a href="{% url 'viewElections' %}"><i class="fa fa-black-tie"></i> <span>Election</span></a></li>
+        <li class="header">SETTINGS</li>
+        <li class=""><a href="{% url 'ballot_position' %}"><i class="fa fa-file-text"></i> <span>Ballot Position</span></a></li>
+        <li class=""><a href="#config" data-toggle="modal"><i class="fa fa-font"></i> <span>Election Title</span></a></li>
       {% endif %}
         
       <li class="header">EXIT</li>

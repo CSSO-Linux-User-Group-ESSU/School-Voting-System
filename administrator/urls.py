@@ -46,6 +46,12 @@ urlpatterns = [
     # * Votes
     path('votes/view', views.viewVotes, name='viewVotes'),
     path('votes/reset/', views.resetVote, name='resetVote'),
-    path('votes/print/', views.PrintView.as_view(), name='printResult'),    
+    path('votes/print/', views.PrintView.as_view(), name='printResult'), 
+
+    # * Committe
+    path("committe/manage", views.committee, name="committee"),
+    path("committee/delte", views.committee_delete, name="deleteCommittee"),
+    path("committe/by_id", views.committee_by_id, name="committeeById"),
+    path("committee/update", views.update_committee, name="committeeUpdate")
 
 ]

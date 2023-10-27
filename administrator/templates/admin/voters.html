@@ -195,8 +195,11 @@
   $(document).ready(function() {
     const params = window.location.search
     const urlParams = new URLSearchParams(params).get("search")
-    if (urlParams === "all") {
-      urlParams =""
+    if (urlParams !== "all") {
+      urlParams = urlParams
+    }
+    else {
+      urlParams = ""
     }
 
     var table = $('#example1').DataTable();

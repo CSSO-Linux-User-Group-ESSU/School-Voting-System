@@ -33,9 +33,9 @@ class CustomUserManager(UserManager):
 
 
 class CustomUser(AbstractUser):
-    USER_TYPE = ((1, "Admin"), (2, "Voter"))
+    USER_TYPE = ((1, "Admin"), (2, "Committee"),(3, "Voter"))
     username = models.CharField(max_length=50, unique=True)
-    user_type = models.CharField(default=2, choices=USER_TYPE, max_length=1)
+    user_type = models.CharField(default=3, choices=USER_TYPE, max_length=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     USERNAME_FIELD = "username"

@@ -9,7 +9,7 @@ class AccountCheckMiddleWare(MiddlewareMixin):
         modulename = view_func.__module__
         user = request.user  # Who is the current user ?
         if user.is_authenticated:
-            if user.user_type == '1':  # Admin
+            if user.user_type == '1' or user.user_type == "2":  # Admin
                 if modulename == 'voting.views':
                     error = True
                     if request.path == reverse('fetch_ballot'):
@@ -18,7 +18,7 @@ class AccountCheckMiddleWare(MiddlewareMixin):
                         messages.error(
                             request, "You do not have access to this resource")
                         return redirect(reverse('adminDashboard'))
-            elif user.user_type == '2':  # Voter
+            elif user.user_type == '3':  # Voter
                 if modulename == 'administrator.views':
                     messages.error(
                         request, "You do not have access to this resource")

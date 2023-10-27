@@ -5,7 +5,7 @@ from django import forms
 # Create your models here.
 
 class College(models.Model):
-    college = models.CharField(max_length=100, null=False)
+    college = models.CharField(max_length=100, null=False, unique=True)
 
     def __str__(self) -> str:
         return self.college

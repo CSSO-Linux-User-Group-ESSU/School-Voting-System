@@ -1,5 +1,7 @@
 from django.shortcuts import render, reverse, redirect
 from voting.models import Voter, Position, Candidate, Votes, Election
+from administrator.forms import CommitteeForms
+from administrator.models import ElectoralCommittee
 from account.models import CustomUser
 from account.forms import CustomUserForm
 from voting.forms import *
@@ -151,7 +153,7 @@ def colleges(request):
             collegesForm.save()                         #Save to database
             messages.success(request, "Added College")  
         else:
-            messages.error(request, "Invalid Form")
+            messages.error(request, "Invalid Form or College may already exist.")
     return redirect(reverse("course"))
 
 def remove_college(request):
@@ -260,7 +262,6 @@ def view_voter_by_id(request):
         context['first_name'] = voter.admin.first_name
         context['last_name'] = voter.admin.last_name
         context['id'] = voter.id
-        context['email'] = voter.admin.email
     return JsonResponse(context)
 
 
@@ -574,3 +575,71 @@ def resetVote(request):
     Voter.objects.all().update(voted=False)
     messages.success(request, "All votes has been reset")
     return redirect(reverse('viewVotes'))
+
+
+def committee(request):
+    committees = ElectoralCommittee.objects.all()
+    committeeForm = CommitteeForms(request.POST or None)
+    customUserForm = CustomUserForm(request.POST or None)
+    if request.method == "POST":
+        if committeeForm.is_valid() and customUserForm.is_valid():
+            if committeeForm.cleaned_data["ssc"] == False and committeeForm.cleaned_data["scope"] == None:
+                messages.error(request, "SSC field is set to No but no college scope!")
+            else:
+                user = customUserForm.save(commit=False)
+                com = committeeForm.save(commit=False)
+                user.user_type = "2"
+                user.is_staff = True
+                user.save()
+                com.fullname = user
+                com.save()
+                messages.success(request, "Added Electoral Committee.")
+        else:
+            messages.error(request, "Invalid Form!")
+    context = {
+        "committeeForm" : committeeForm,
+        "userForm" : customUserForm,
+        "committees" : committees,
+        "page_title" : "Committee"
+    }
+    return render(request, "admin/committee.html", context)
+
+def committee_delete(request):
+    if request.method == "POST":
+        com = ElectoralCommittee.objects.get(id=request.POST.get("id"))
+        com.delete()
+        messages.success(request, "Deleted Electoral Committee.")
+    else:
+        messages.error(request, "Access to this resorcce is denied!")
+    return redirect(reverse("committee"))
+
+
+def committee_by_id(request):
+    committee_id = request.GET.get('id', None)
+    committee = ElectoralCommittee.objects.filter(id=committee_id)
+    context = {}
+    if not committee.exists():
+        context['code'] = 404
+    else:
+        committee = committee[0]
+        context['code'] = 200
+        context['first_name'] = committee.fullname.first_name
+        context['last_name'] = committee.fullname.last_name
+        context['username'] = committee.fullname.username
+        context['id'] = committee.id
+        previous = CommitteeForms(instance=committee)
+        context['form'] = str(previous.as_p())
+    return JsonResponse(context)
+
+def update_committee(request):
+    if request.method == "POST":
+        committee_id = ElectoralCommittee.objects.get(id=request.POST.get("id"))
+        form = CustomUserForm(request.POST or None, instance=committee_id.fullname)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Committee updated!")
+        else:
+            messages.error(request, "Form validation error!")
+    else:
+        messages.error(request, "Access to this resource is denied!")
+    return redirect(reverse("committee"))

@@ -69,7 +69,7 @@ class Election(models.Model):
     
 class Candidate(models.Model):
     
-    fullname = models.CharField(max_length=50)
+    fullname = models.ForeignKey(Voter, on_delete=models.CASCADE)
     student_id = models.CharField(max_length=10)
     photo = models.ImageField(upload_to="candidates")
     bio = models.TextField()

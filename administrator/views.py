@@ -95,9 +95,14 @@ class PrintView(PDFView):
 
 def dashboard(request):
     active_election = Election.objects.filter(started=True)
+    try:
+        user_data = ElectoralCommittee.objects.get(fullname_id = request.user.id)
+    except Exception:
+        user_data = None
     context = {}
     chart_data = {}
     search = "all"
+    show_chart = False
     if not active_election:
         positions : Position = Position.objects.all()
         candidates = Candidate.objects.all()
@@ -109,32 +114,54 @@ def dashboard(request):
         positions : Position = Position.objects.filter(candidate__election_id=active_election[0]).distinct().order_by('priority')
         candidates = Candidate.objects.filter(election=active_election[0])
         if active_election[0].scope == "1":
-            voters = Voter.objects.all()
-            voted_voters = Voter.objects.filter(voted=1)
+            print(user_data.ssc)
+            if user_data and user_data.ssc == True or request.user.user_type == "1":
+                voters = Voter.objects.all()
+                voted_voters = Voter.objects.filter(voted=1)
+                show_chart = True
+            else:
+                voters = Voter.objects.filter(id=0)
+                voted_voters = Voter.objects.filter(id=0)
+                show_chart = False
         elif active_election[0].scope == "2":
-            voters = Voter.objects.filter(course__college=active_election[0].college_limit)
-            voted_voters = Voter.objects.filter(course__college=active_election[0].college_limit,voted=1)
-            search = active_election[0].college_limit
+            if user_data and user_data.scope == active_election[0].college_limit or request.user.user_type == "1":
+                voters = Voter.objects.filter(course__college=active_election[0].college_limit)
+                voted_voters = Voter.objects.filter(course__college=active_election[0].college_limit,voted=1)
+                search = active_election[0].college_limit
+                show_chart = True
         elif active_election[0].scope == "3":
-            voters = Voter.objects.filter(course=active_election[0].course_limit, year_level=active_election[0].year_level_limit)
-            voted_voters = Voter.objects.filter(course=active_election[0].course_limit, year_level=active_election[0].year_level_limit, voted=1)
-            search = f"{active_election[0].course_limit}-{active_election[0].year_level_limit}"
+            course_college = College.objects.get(course=active_election[0].course_limit)
+            if user_data and user_data.scope == course_college or request.user.user_type == "1":
+                voters = Voter.objects.filter(course=active_election[0].course_limit, year_level=active_election[0].year_level_limit)
+                voted_voters = Voter.objects.filter(course=active_election[0].course_limit, year_level=active_election[0].year_level_limit, voted=1)
+                search = f"{active_election[0].course_limit}-{active_election[0].year_level_limit}"
+                show_chart = True
+        if show_chart:
+            for position in positions:
+                list_of_candidates = []
+                votes_count = []
+                for candidate in Candidate.objects.filter(position=position, election=active_election[0]):
+                    list_of_candidates.append(candidate.fullname)
+                    votes = Votes.objects.filter(candidate=candidate).count()
+                    votes_count.append(votes)
+                chart_data[position] = {
+                    'candidates': list_of_candidates,
+                    'votes': votes_count,
+                    'pos_id': position.id
+                }
+        
 
-        for position in positions:
-            list_of_candidates = []
-            votes_count = []
-            for candidate in Candidate.objects.filter(position=position, election=active_election[0]):
-                list_of_candidates.append(candidate.fullname)
-                votes = Votes.objects.filter(candidate=candidate).count()
-                votes_count.append(votes)
-            chart_data[position] = {
-                'candidates': list_of_candidates,
-                'votes': votes_count,
-                'pos_id': position.id
-            }
-        context["has_election"] = True
+        context["has_election"] = show_chart
         context["positions"] = positions
         context["election_title"] = str(active_election[0]).title()
+
+    if request.user.user_type == "2":
+        if not user_data.ssc:
+            voters = Voter.objects.filter(course__college=user_data.scope)
+            candidates = Candidate.objects.filter(fullname__course__college=user_data.scope)
+            positions = Position.objects.filter(candidate__fullname__course__college=user_data.scope).distinct().order_by('priority')
+            search = user_data.scope
+    
    
     context["search"] = search
     context["position_count"] = positions.count()  
@@ -441,17 +468,12 @@ def viewCandidates(request):
     }
     if request.method == 'POST':
         if form.is_valid():
-            try:
-                Voter.objects.get(id_number=request.POST.get("student_id"))
-            except Exception:
-                messages.error(request, "Student don't exist!")
-            else:
-                form = form.save(commit=False)
-                form.election = election_id
-                form.save()
-                messages.success(request, "New Candidate Created")
+            form = form.save(commit=False)
+            form.election = election_id
+            form.save()
+            messages.success(request, "New Candidate Created")
         else:
-            messages.error(request, "Form errors")
+            messages.error(request, "Student not enrolled.")
     return render(request, "admin/candidates.html", context)
 
 def updateCandidate(request):

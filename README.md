@@ -5,41 +5,7 @@ A voting system for CCS.
 [Setting up your account](https://docs.github.com/en/get-started/quickstart/set-up-git)
 
 # Cloning
-1. On [Github](github.com) click your profile.
-
-   ![](ReadmeFiles/s1.png)
-
-2. Click `Settings`.
-
-   ![](ReadmeFiles/s2.png)
-
-3. Click `Developer Settings`.
-
-   ![](ReadmeFiles/s3.png)
-
-4. Click `Personal Access token`.
-
-   ![](ReadmeFiles/s4.png)
-
-5. Click `Generate Token`.
-
-  ![](ReadmeFiles/s5.png)
-
-6. Check the `repo`.
-
-   ![](ReadmeFiles/s6.png)
-
-7. Click `Generate token`.
-
-  ![](ReadmeFiles/s7.png)
-
-8. Copy your token.
-
-   ![](ReadmeFiles/s8.png)
-
-9. Use your token when ask for a password in cloning.
-
-    ![](ReadmeFiles/s9.png)
+1. Run `git clone --branch contrib https://github.com/Linux-User-Group-ESSU/CCS-Voting.git`
 
 # After cloning the repo run on terminal:
 1. `cd CCS-Voting`

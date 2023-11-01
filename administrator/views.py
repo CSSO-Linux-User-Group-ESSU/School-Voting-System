@@ -446,7 +446,7 @@ def startElection(request):
                 else:
                     messages.error(request, "Access to that resource is denied!")
             else:
-                messages.error(request, "No access here!")
+                messages.error(request, "No access here!") 
                 
         
     return redirect(reverse("viewElections"))

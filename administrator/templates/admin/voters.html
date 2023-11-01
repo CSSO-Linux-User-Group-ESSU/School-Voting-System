@@ -195,10 +195,7 @@
   $(document).ready(function() {
     const params = window.location.search
     const urlParams = new URLSearchParams(params).get("search")
-    if (urlParams !== "all") {
-      urlParams = urlParams
-    }
-    else {
+    if (urlParams === "all") {
       urlParams = ""
     }
 

@@ -10,7 +10,7 @@ from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 import json  # Not used
 from django_renderpdf.views import PDFView
-from django.db.models import Count
+from django.db.models import Count, Q
 from administrator.voter_upload import upload_voters
 import os
 
@@ -384,6 +384,10 @@ def deletePosition(request):
 def viewElections(request):
     electionForm = ElectionForm(request.POST or None)
     on_going = Election.objects.all().order_by('title')
+    if request.user.user_type == "2":
+        user_data = ElectoralCommittee.objects.get(fullname_id=request.user.id)
+        if not user_data.ssc:
+            on_going = Election.objects.filter(Q(course_limit__college = user_data.scope) | Q(college_limit = user_data.scope))
     context = {
         "electionForm" : electionForm,
         "on_going" : on_going,
@@ -421,20 +425,29 @@ def election_by_id(request):
         previous = ElectionForm(instance=election)
         context['form'] = str(previous.as_p())
     return JsonResponse(context)
-
+ 
 def startElection(request):
     if request.method != "POST":
         messages.error(request, "Access To This Resources Denied!")
     else:
-        started = Election.objects.filter(started=True).count()
-        if started >= 1:
-            messages.error(request, "An Election is on-going!")
+        started = Election.objects.filter(started=True)
+        if started.count() >= 1:
+            messages.error(request, f"{started[0]} Election is on-going!")
         else:
-            Election.objects.filter(id=request.POST.get("start_id")).update(
-                started=True
-            )
-            title = Election.objects.get(id=request.POST.get("start_id"))
-            messages.success(request, f"{title.title} Election Started.")
+            e = Election.objects.filter(id=request.POST.get("start_id"))
+            if request.user.user_type == "1":
+                e.update(started=True)
+                messages.success(request, f"{e[0].title} Election Started.")
+            elif request.user.user_type == "2":
+                cmt = ElectoralCommittee.objects.get(fullname_id=request.user.id)
+                if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope:
+                    e.update(started=True)
+                    messages.success(request, f"{e[0].title} Election Started.")
+                else:
+                    messages.error(request, "Access to that resource is denied!")
+            else:
+                messages.error(request, "No access here!")
+                
         
     return redirect(reverse("viewElections"))
 
@@ -442,10 +455,19 @@ def stopElection(request):
     if request.method != "POST":
         messages.error(request, "Access To This Resources Denied!")
     else:
-        Election.objects.filter(id=request.POST.get("stop_id")).update(
-            started=False
-        )
-        messages.success(request, "You can now start another election.")
+        e = Election.objects.filter(id=request.POST.get("stop_id"))
+        if request.user.user_type == "1":
+            e.update(started=False)
+            messages.success(request, "You can now start another election.")
+        elif request.user.user_type == "2":
+            cmt = ElectoralCommittee.objects.get(fullname_id=request.user.id)
+            if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope:
+                e.update(started=False)
+                messages.success(request, "You can now start another election.")
+            else:
+                 messages.error(request, "Access to that resource is denied!")
+        else:
+            messages.error(request, "No Access Here!")
     return redirect(reverse("viewElections"))
 
 def viewCandidates(request):
@@ -630,6 +652,8 @@ def committee_delete(request):
     if request.method == "POST":
         com = ElectoralCommittee.objects.get(id=request.POST.get("id"))
         com.delete()
+        cstmsr = CustomUser.objects.get(id=com.fullname.id)
+        cstmsr.delete()
         messages.success(request, "Deleted Electoral Committee.")
     else:
         messages.error(request, "Access to this resorcce is denied!")

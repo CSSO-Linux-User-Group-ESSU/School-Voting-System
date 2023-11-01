@@ -42,6 +42,10 @@ class CandidateForm(FormSettings):
         model = Candidate
         fields = ['fullname', 'student_id', 'bio', 'position', 'photo', 'position']
 
+    def __init__(self, *args, **kwargs):
+        super(CandidateForm, self).__init__(*args, **kwargs)
+        self.fields['fullname'].widget = forms.TextInput(attrs={"class" : "form-control"})
+
 class CourseForm(FormSettings):
     class Meta:
         model = Course

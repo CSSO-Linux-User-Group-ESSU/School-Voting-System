@@ -52,6 +52,6 @@ urlpatterns = [
     path("committe/manage", views.committee, name="committee"),
     path("committee/delte", views.committee_delete, name="deleteCommittee"),
     path("committe/by_id", views.committee_by_id, name="committeeById"),
-    path("committee/update", views.update_committee, name="committeeUpdate")
+    path("committee/update", views.update_committee, name="committeeUpdate") 
 
 ]

@@ -17,14 +17,14 @@ A voting system for CCS.
 4. Install requirements.txt
      `pip install -r requirements.txt`
 5. Create the migration\
-   a. linux: `python3 manage.py makemigrations`\
-   b. Windows: `python manage.py makemigrations`\
-   c. MacOs: `Mali ka ada han im nakadian`
+    `python3 manage.py makemigrations`\
 6. Migrate\
-   a. linux: `python3 manage.py migrate`\
-   b. Windows: `python manage.py migrate`\
-   c. MacOs: `Ano nga yadi ka pa???`
+    `python3 manage.py migrate`\
 7. Run the server\
-   a. linux: `python3 manage.py runserver`\
-   b. Windows: `python3 manage.py runserver`\
-   c. MacOs: `Wara didi kanan Mac. Uli nala!`
+    `python3 manage.py runserver`\
+
+# Deployment
+1. Set the DEBUG to `False` in e_votinh/settings.py
+2. Add your IP Address to `ALLOWED_HOST` in e_voting/settings/py
+3. run `python manage.py collectstatic`
+4. run `python3 manage.py runserver IP_ADDRESS:PORT`

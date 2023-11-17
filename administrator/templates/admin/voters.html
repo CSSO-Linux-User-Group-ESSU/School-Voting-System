@@ -101,8 +101,8 @@
           <div style="align-items: center; width:fit-content; margin:0 auto;">
             <label for="id_voters_file">
               <div class="voter-upload" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-                <img src="../../../static/upload.png" width="100px" height="100px" id="no_upload">
-                <img src="../../../static/uploaded.png" width="100px" height="100px" id="uploaded" style="display: none;">
+                <img src="../../../staticfiles/upload.png" width="100px" height="100px" id="no_upload">
+                <img src="../../../staticfiles/uploaded.png" width="100px" height="100px" id="uploaded" style="display: none;">
               </div>
             </label>
             {% for up in userupload %}
@@ -194,7 +194,7 @@
 <script>
   $(document).ready(function() {
     const params = window.location.search
-    const urlParams = new URLSearchParams(params).get("search")
+    let urlParams = new URLSearchParams(params).get("search")
     if (urlParams === "all") {
       urlParams = ""
     }

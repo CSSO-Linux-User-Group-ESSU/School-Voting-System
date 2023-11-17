@@ -149,11 +149,17 @@ def voted_candidate_form(request):
         if candidates.count() >= 1:
             temp_form += f"""<div class="candidate-name">
                             <p><b>{pos}</b></p>"""
-            for _ in range(pos.max_vote):
+            if pos.max_vote > 1:
+                for i in range(pos.max_vote):
+                    print(i)
+                    temp_form += f"""<p class= 'voted' id='{slugify(pos.name+str(pos.id))}-{i}'>• None</p>
+                        <input name='{slugify(pos.name)}' type='hidden'
+                            id='{slugify(pos.name+str(pos.id))}-{i}-val'></input>
+                    """
+            else:
                 temp_form += f"""<p class="voted" id='{slugify(pos.name+str(pos.id))}'>• None</p>
                             <input name='{slugify(pos.name)}' type='hidden'
                                 id='{slugify(pos.name+str(pos.id))}-val'></input>"""
-                temp_form += "</div>"
     if temp_form:
         form = f"""<div class='col-xs-12' id='forda-modal'>
                 <div class='box box-solid'>
@@ -195,7 +201,7 @@ def generate_voters_ballot(request : object):
         position_name : str = slugify(position)
         
         if position.max_vote > 1:
-            instruction = "You may select up to" + str(position.max_vote) + "candidates"
+            instruction = "You may select up to " + str(position.max_vote) + " candidates"
         else:
             instruction = "Select only one candidate"
         for cand in candidates:

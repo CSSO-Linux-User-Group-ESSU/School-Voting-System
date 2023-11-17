@@ -141,7 +141,7 @@ def dashboard(request):
                 list_of_candidates = []
                 votes_count = []
                 for candidate in Candidate.objects.filter(position=position, election=active_election[0]):
-                    list_of_candidates.append(candidate.fullname)
+                    list_of_candidates.append(str(candidate.fullname))
                     votes = Votes.objects.filter(candidate=candidate).count()
                     votes_count.append(votes)
                 chart_data[position] = {
@@ -482,18 +482,36 @@ def viewCandidates(request):
     else:
         candidates = Candidate.objects.filter(election=election_id)
 
+    if election_id.scope == "1":
+        prospects = Voter.objects.all()
+    elif election_id.scope == "2":
+        prospects = Voter.objects.filter(course__college = election_id.college_limit)
+    else:
+        prospects = Voter.objects.filter(course=election_id.course_limit, year_level=election_id.year_level_limit)
+
     context = {
         'candidates': candidates,
         'form1': form,
         'page_title': 'Candidates',
-        'election_id' : election_id
+        'election_id' : election_id,
+        "prospects" : prospects
     }
     if request.method == 'POST':
         if form.is_valid():
-            form = form.save(commit=False)
-            form.election = election_id
-            form.save()
-            messages.success(request, "New Candidate Created")
+            try:
+                fullname = request.POST.get('fullname_id').split(",")
+            except Exception:
+                messages.error(request, "Invalid Name!")
+            else:
+                voter_data = Voter.objects.get(admin__first_name = fullname[0], admin__last_name = fullname[1].strip())
+                if voter_data.id_number != form.cleaned_data['student_id']:
+                    messages.error(request, "Student ID is from other student!")
+                else:
+                    form = form.save(commit=False)
+                    form.fullname = voter_data
+                    form.election = election_id
+                    form.save()
+                    messages.success(request, "New Candidate Created")
         else:
             messages.error(request, "Student not enrolled.")
     return render(request, "admin/candidates.html", context)
@@ -539,7 +557,7 @@ def view_candidate_by_id(request):
     else:
         candidate = candidate[0]
         context['code'] = 200
-        context['fullname'] = candidate.fullname
+        context['fullname'] = str(candidate.fullname)
         previous = CandidateForm(instance=candidate)
         context['form'] = str(previous.as_p())
     return JsonResponse(context)

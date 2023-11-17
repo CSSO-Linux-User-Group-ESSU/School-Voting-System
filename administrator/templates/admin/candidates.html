@@ -57,6 +57,16 @@
             <form class="form-horizontal" enctype="multipart/form-data" method="POST" action="{% url 'viewCandidates' %}?id={{election_id.id}}">
               {% csrf_token %}   
               <div class="modal-body">
+                  <div class="form-group has-feedback">
+                    <span class="text-danger">{{field.errors}}</span>
+                    Fullname
+                    <input type='text' list='voter_list' name='fullname_id' maxlength='50' class='form-control' required id='id_fullname'>
+                    <datalist id="voter_list"> 
+                      {% for i in prospects %}
+                        <option value="{{i}}"></option>
+                      {% endfor %}
+                    </datalist>
+                  </div>
                   {% for field in form1  %}
                   <div class="form-group has-feedback">
                       <span class="text-danger">{{field.errors}}</span>

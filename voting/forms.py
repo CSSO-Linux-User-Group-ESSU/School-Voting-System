@@ -33,18 +33,14 @@ class PositionForm(FormSettings):
         model = Position
         fields = ['name', 'max_vote', 'representative']
         labels = {
-            "representative" : "Choose Yes if it is a Representative."
+            "representative" : "Choose Yes if it is a exclusive for certain College or Course."
         }
 
 
 class CandidateForm(FormSettings):
     class Meta:
         model = Candidate
-        fields = ['fullname', 'student_id', 'bio', 'position', 'photo', 'position']
-
-    def __init__(self, *args, **kwargs):
-        super(CandidateForm, self).__init__(*args, **kwargs)
-        self.fields['fullname'].widget = forms.TextInput(attrs={"class" : "form-control"})
+        fields = ['student_id', 'bio', 'position', 'photo', 'position']
 
 class CourseForm(FormSettings):
     class Meta:

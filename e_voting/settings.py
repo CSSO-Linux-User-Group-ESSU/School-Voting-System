@@ -26,7 +26,7 @@ SECRET_KEY = '%6lp_p!%r$7t-2ql5hc5(r@)8u_fc+6@ugxcnz=h=b(fn#3$p9'
 DEBUG = True
 
 #Put your network IP to start network hosting
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -89,9 +89,17 @@ WSGI_APPLICATION = 'e_voting.wsgi.application'
 
 DATABASES = {
     #   You can use this :
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'e_voting',
+        'HOST': '127.0.0.1',
+        'USER': 'root',
+        'PASSWORD': 'essuxlug'
     }
 }
 

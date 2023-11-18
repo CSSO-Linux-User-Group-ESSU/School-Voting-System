@@ -532,7 +532,7 @@ def updateCandidate(request):
     except:
         messages.error(request, "Access To This Resource Denied")
 
-    return redirect(reverse('viewCandidates') + f'?={candidate.election.id}')
+    return redirect(reverse('viewCandidates') + f'?id={candidate.election.id}')
 
 
 def deleteCandidate(request):

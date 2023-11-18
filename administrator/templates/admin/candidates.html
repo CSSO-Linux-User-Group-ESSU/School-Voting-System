@@ -91,7 +91,7 @@
             <h4 class="modal-title"><b>Edit Candidate</b></h4>
           </div>
           <div class="modal-body">
-            <form class="form-horizontal" enctype="multipart/form-data" method="POST" action="{% url 'updateCandidate' %}">
+            <form class="form-horizontal" enctype="multipart/form-data" method="POST" action="{% url 'updateCandidate' %}?id={{election_id.id}}">
               {% csrf_token %}
               <input type="hidden" class="id" name="id">
               <p class="display_form">

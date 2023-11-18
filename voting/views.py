@@ -24,7 +24,6 @@ def generate_ballot(display_controls=False):
     output = ""
     if Election.objects.filter(started = True).count() == 0:
         output += "<div id='admin-no-data'><p>Election Hasn't started yet!</p><p>Stay Tuned!!</p></div>"
-        print("Hello world")
     else:
         election_id = Election.objects.get(started=True)
         distinct_positions = Position.objects.filter(candidate__election_id=election_id).distinct().order_by('priority')
@@ -151,9 +150,8 @@ def voted_candidate_form(request):
                             <p><b>{pos}</b></p>"""
             if pos.max_vote > 1:
                 for i in range(pos.max_vote):
-                    print(i)
                     temp_form += f"""<p class= 'voted' id='{slugify(pos.name+str(pos.id))}-{i}'>• None</p>
-                        <input name='{slugify(pos.name)}' type='hidden'
+                        <input name='{slugify(pos.name)}[]' type='hidden'
                             id='{slugify(pos.name+str(pos.id))}-{i}-val'></input>
                     """
             else:
@@ -220,8 +218,10 @@ def generate_voters_ballot(request : object):
             paraID : str = slugify(position_name+str(position.id))
             if position.max_vote > 1:
                 input_box = '<input type="checkbox" value="'+str(cand.id)+'" class="flat-red ' + \
-                    position_name+'" name="' + \
-                    position_name+"[]" + '">'
+                    position_name+'" name="' + position_name+ "[]" + '"'\
+                    f"""onChange="handleMultipleVote('{str(position_name)}', {position.max_vote}, '{paraID}', '{str(cand.fullname)}')"
+                    id = '{paraID+str(cand.id)}'>"""
+                    
             else:
                 input_box = f"""<input value='{str(cand.id)}' type='radio' class='flat-red {position_name}' 
                         name='{position_name}' id='{position_name+str(cand.id)}input'
@@ -251,7 +251,7 @@ def generate_voters_ballot(request : object):
                         <div class='box-body'>
                             <p>{instruction}
                                 <span class='pull-right'>
-                                    <button type="button" onClick='updateVoted("{paraID}")' class="btn btn-success btn-sm btn-flat reset" data-desc="{position_name}"><i class="fa fa-refresh"></i> Reset</button>
+                                    <button type="button" onClick='reseter("{paraID}")' class="btn btn-success btn-sm btn-flat reset" data-desc="{position_name}"><i class="fa fa-refresh"></i> Reset</button>
                                 </span>
                             </p>
                             <div class='candidate-ul'>
@@ -379,19 +379,20 @@ def submit_ballot(request):
                 return redirect(reverse('show_ballot'))
             else:
                 for form_candidate_id in form_position:
-                    form_count += 1
-                    try:
-                        candidate = Candidate.objects.get(
-                            id=form_candidate_id, position=position)
-                        vote = Votes()
-                        vote.candidate = candidate
-                        vote.voter = voter
-                        vote.position = position
-                        vote.save()
-                    except Exception as e:
-                        messages.error(
-                            request, "Please, browse the system properly " + str(e))
-                        return redirect(reverse('show_ballot'))
+                    if form_candidate_id:
+                        form_count += 1
+                        try:
+                            candidate = Candidate.objects.get(
+                                id=form_candidate_id, position=position)
+                            vote = Votes()
+                            vote.candidate = candidate
+                            vote.voter = voter
+                            vote.position = position
+                            vote.save()
+                        except Exception as e:
+                            messages.error(
+                                request, "Please, browse the system properly " + str(e))
+                            return redirect(reverse('show_ballot'))
         else:
             this_key = pos
             form_position = form.get(this_key)

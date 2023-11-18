@@ -86,39 +86,62 @@
   window.onload = function() {
     setTimeout(function() {
       //Get all the keys in the local Storage
-      keys = Object.keys(localStorage)
-      //Itterate over the keys
-      for (let i = 0; i < keys.length; i++) {
-        //Get the data using the keys
-        const localData = JSON.parse(localStorage.getItem(keys[i]))
-        //Update all the elements
-        //Mas maupay kun mahimo in into j query
-        const input = document.getElementById(localData.input_id.replace("#", ""))
-        //Check the candidate button 
-        input.checked = true
-        //Put thr candidate name to voted
-        $(localData.votedForm_id).html(`${localData.cand_name}`)
-        //Add the value to input
-        $(localData.formInputID).val(localData.id_value )
+      const localdata = JSON.parse(localStorage.getItem("{{request.user.id}}"))
+      if (localdata) {
+        const keys = Object.keys(localdata)
+        for (let i = 0; i < keys.length; i++) {
+          let retrievedData = localdata[keys[i]]
+          const input = document.getElementById(retrievedData.input_id.replace("#", ""))
+          $(retrievedData.votedForm_id).html(`${retrievedData.cand_name}`)
+          $(retrievedData.formInputID).val(retrievedData.id_value )
+        }
+        selectButton(localdata) 
       }
-    }, 50) //Ayaw in tanggal or bag'uha
+    }, 100) //Ayaw in tanggal or bag'uha
+  }
+
+  function selectButton() {
+    const localdata = JSON.parse(localStorage.getItem("{{request.user.id}}"))
+    if (localdata) {
+      const keys = Object.keys(localdata)
+          for (let i = 0; i < keys.length; i++) {
+            let retrievedData = localdata[keys[i]]
+            const input = document.getElementById(retrievedData.input_id.replace("#", ""))
+            if (input !== null) {
+              input.checked = true
+            }
+          }
+        }
   }
 
   //Save the data to local storage
-  function localsave(input_id, id_value, cand_name, votedForm_id, formInputID) {
+  function localsave(input_id, id_value, cand_name, votedForm_id, formInputID, custom_key = null) {
     const cand_data = {
-                        "input_id" : input_id, 
-                        "id_value" : id_value, 
-                        "cand_name" : cand_name, 
-                        "votedForm_id" : votedForm_id,
-                        "formInputID" : formInputID
-                      }
-    localStorage.setItem(votedForm_id, JSON.stringify(cand_data))
+      "input_id" : input_id, 
+      "id_value" : id_value, 
+      "cand_name" : cand_name, 
+      "votedForm_id" : votedForm_id,
+      "formInputID" : formInputID
+    }
+    const userID = "{{request.user.id}}"
+    if (localStorage.getItem(userID) === null){
+      localStorage.setItem(userID, custom_key === null ? 
+      JSON.stringify({[votedForm_id] : cand_data}) :
+      JSON.stringify({[custom_key] : cand_data}))
+    }
+    else {
+      var old_data = JSON.parse(localStorage.getItem(userID))
+      old_data[custom_key === null ? votedForm_id : custom_key] = cand_data
+      localStorage.setItem(userID, JSON.stringify(old_data))
+    }
   }
 
   //Remove a data from local storage
   function removeLocalStorage(item_to_remove) {
-    localStorage.removeItem(item_to_remove)
+    const userID = "{{request.user.id}}"
+    var localdata = JSON.parse(localStorage.getItem(userID))
+    delete localdata[item_to_remove]
+    localStorage.setItem(userID, JSON.stringify(localdata))
   }
 
   function updateVoted(position, word="", candidate_id='', voted_id='') {
@@ -137,6 +160,67 @@
     }
   }
 
+  function reseter(id, ) {
+    updateVoted(id)
+    addVoteforMultiple()
+  }
+
+  function handleMultipleVote(position, max_vote, input_id, name) {
+    const data = document.querySelectorAll(`.${position}`)
+    let count = 0;
+    voted_id = []
+    data.forEach(function (checkbox) {
+      if (checkbox.checked){
+        if (count == +max_vote) {
+          return
+        }
+        count++;
+        voted_id.push({"input_id" : checkbox.id, "name" : name})
+      }
+    })
+    addVoteforMultiple(voted_id, max_vote, input_id)
+    if (count == +max_vote) {
+      data.forEach(function (checkbox) {
+        if (!checkbox.checked) {
+          checkbox.disabled = true;
+        }
+      })
+    }
+    else {
+      data.forEach(function (checkbox) {
+        checkbox.disabled = false;
+      })
+    }
+  }
+
+  function addVoteforMultiple(voted_id, max_vote, input_id) {
+    for (let i = 0; i < +max_vote; i++) {
+      if (voted_id[i] === undefined) {
+        var input_id_str = (`#${input_id}-${i}`)
+        var custom_key = (`#${input_id}-${i}-${i}`)
+        var remove_key = (`${input_id}-${i}-${i}`)
+        var input_id_input = (`#${input_id}-${i}-val`)
+        $(input_id_str).html(`• None`)
+        $(input_id_input).val("")
+        removeLocalStorage(remove_key)
+      }
+      else {
+        var voted_id_str = (`#${voted_id[i].input_id}`)
+        var input_id_str = (`#${input_id}-${i}`)
+        var input_id_input = (`#${input_id}-${i}-val`)
+        var custom_key = (`${input_id}-${i}-${i}`)
+        $(input_id_str).html(`• ${voted_id[i].name}`)
+        $(input_id_input).val($(voted_id_str).val())
+        localsave(voted_id_str, 
+          $(voted_id_str).val(), 
+          `• ${voted_id[i].name}`, 
+          input_id_str,
+          input_id_input,
+          custom_key)
+      }
+    }
+  }
+
   function load_candidate(page=1) {
     $.ajax({
       type: "GET",
@@ -150,6 +234,7 @@
         $("#page-buttons").html(response.next_button)
       }
     })
+    setTimeout(selectButton, 50)
   }
 </script>
 

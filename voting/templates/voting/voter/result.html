@@ -43,7 +43,7 @@ aria-hidden="true">&times;</button>
                   <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ vote.position }}</td>
-                    <td>{{ vote.candidate }}</td>
+                    <td>{{ vote.candidate.fullname }}</td>
                   </tr>
                 {% endfor %}
               </table>

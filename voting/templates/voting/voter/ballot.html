@@ -276,7 +276,7 @@
             <form action="{% url 'submit_ballot' %}" method="POST">
               {% csrf_token %}
               <div id="modalForm" style="display: none;"></div>
-              <button type="submit" onclick="localStorage.clear()">Yes</button>
+              <button type="submit" onclick="localStorage.removeItem('{{request.user.id}}')">Yes</button>
             </form>
           </div>
       </div>

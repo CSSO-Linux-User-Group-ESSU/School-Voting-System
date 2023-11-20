@@ -254,10 +254,10 @@
   function updateUsername() {
     var first_name = document.getElementById("id_first_name").value.trim().replaceAll(" ", "").toLowerCase()
     var student_id = document.getElementById("id_id_number").value.trim().replaceAll(" ", "").toLowerCase()
-    var mother_last_name = document.getElementById("id_mother_maiden_last_name").value.trim().replaceAll(" ", "").toLowerCase()
-    var uname = `${first_name}.${mother_last_name}`
+    var mother_middle_name = document.getElementById("id_mother_maiden_middle_name").value.trim().replaceAll(" ", "").toLowerCase()
+    var uname = `${first_name}.${mother_middle_name}`
     $("#id_username").val(uname)
-    $("#id_password").val(`${student_id}.${mother_last_name}`)
+    $("#id_password").val(`${student_id}.${mother_middle_name}`)
   }
 
   function enableForm() {

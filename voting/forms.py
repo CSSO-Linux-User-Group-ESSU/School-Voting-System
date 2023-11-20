@@ -17,12 +17,12 @@ class FileUploadForm(forms.ModelForm):
 class VoterForm(FormSettings):
     class Meta:
         model = Voter
-        fields = ["mother_maiden_last_name", 'id_number', 'course', 'year_level']
+        fields = ["mother_maiden_middle_name", 'id_number', 'course', 'year_level']
         widgets = {
             'id_number' : forms.TextInput(attrs= {
                 'onkeyup' : 'updateUsername()'
             }),
-            'mother_maiden_last_name' : forms.TextInput(attrs= {
+            'mother_maiden_middle_name' : forms.TextInput(attrs= {
                 'onkeyup' : 'updateUsername()'
             })
         }

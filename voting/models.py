@@ -25,7 +25,7 @@ class Voter(models.Model):
         Fourth = 4 , "Fourth"
 
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    mother_maiden_last_name = models.CharField(max_length=20)
+    mother_maiden_middle_name = models.CharField(max_length=20)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     year_level = models.IntegerField(choices=YearLevel.choices)
     voted = models.BooleanField(default=False)

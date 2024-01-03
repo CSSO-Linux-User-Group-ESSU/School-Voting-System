@@ -4,4 +4,5 @@ virtualenv==20.0.31
 Pillow
 django-renderpdf
 requests
+whitenoise
 mysqlclient

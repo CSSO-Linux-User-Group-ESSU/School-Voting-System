@@ -388,6 +388,8 @@ def viewElections(request):
         user_data = ElectoralCommittee.objects.get(fullname_id=request.user.id)
         if not user_data.ssc:
             on_going = Election.objects.filter(Q(course_limit__college = user_data.scope) | Q(college_limit = user_data.scope))
+        else:
+            on_going = Election.objects.filter(scope=1)
     context = {
         "electionForm" : electionForm,
         "on_going" : on_going,
@@ -440,7 +442,7 @@ def startElection(request):
                 messages.success(request, f"{e[0].title} Election Started.")
             elif request.user.user_type == "2":
                 cmt = ElectoralCommittee.objects.get(fullname_id=request.user.id)
-                if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope:
+                if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope or cmt.ssc and e[0].scope == "1":
                     e.update(started=True)
                     messages.success(request, f"{e[0].title} Election Started.")
                 else:
@@ -461,7 +463,7 @@ def stopElection(request):
             messages.success(request, "You can now start another election.")
         elif request.user.user_type == "2":
             cmt = ElectoralCommittee.objects.get(fullname_id=request.user.id)
-            if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope:
+            if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope or cmt.ssc and e[0].scope == "1":
                 e.update(started=False)
                 messages.success(request, "You can now start another election.")
             else:

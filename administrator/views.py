@@ -13,6 +13,7 @@ from django_renderpdf.views import PDFView
 from django.db.models import Count, Q
 from administrator.voter_upload import upload_voters
 import os
+from administrator.backend.ElectionStop import stoper
 
 def find_n_winners(data, n):
     """Read More
@@ -114,7 +115,6 @@ def dashboard(request):
         positions : Position = Position.objects.filter(candidate__election_id=active_election[0]).distinct().order_by('priority')
         candidates = Candidate.objects.filter(election=active_election[0])
         if active_election[0].scope == "1":
-            print(user_data.ssc)
             if user_data and user_data.ssc == True or request.user.user_type == "1":
                 voters = Voter.objects.all()
                 voted_voters = Voter.objects.filter(voted=1)
@@ -452,23 +452,8 @@ def startElection(request):
     return redirect(reverse("viewElections"))
 
 def stopElection(request):
-    if request.method != "POST":
-        messages.error(request, "Access To This Resources Denied!")
-    else:
-        e = Election.objects.filter(id=request.POST.get("stop_id"))
-        if request.user.user_type == "1":
-            e.update(started=False)
-            messages.success(request, "You can now start another election.")
-        elif request.user.user_type == "2":
-            cmt = ElectoralCommittee.objects.get(fullname_id=request.user.id)
-            if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope:
-                e.update(started=False)
-                messages.success(request, "You can now start another election.")
-            else:
-                 messages.error(request, "Access to that resource is denied!")
-        else:
-            messages.error(request, "No Access Here!")
-    return redirect(reverse("viewElections"))
+    req = stoper(request)
+    return redirect(req)
 
 def viewCandidates(request):
     form = CandidateForm(request.POST or None, request.FILES or None)

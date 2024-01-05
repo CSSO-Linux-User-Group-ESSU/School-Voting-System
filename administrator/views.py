@@ -425,35 +425,7 @@ def election_by_id(request):
         previous = ElectionForm(instance=election)
         context['form'] = str(previous.as_p())
     return JsonResponse(context)
- 
-def startElection(request):
-    if request.method != "POST":
-        messages.error(request, "Access To This Resources Denied!")
-    else:
-        started = Election.objects.filter(started=True)
-        if started.count() >= 1:
-            messages.error(request, f"{started[0]} Election is on-going!")
-        else:
-            e = Election.objects.filter(id=request.POST.get("start_id"))
-            if request.user.user_type == "1":
-                e.update(started=True)
-                messages.success(request, f"{e[0].title} Election Started.")
-            elif request.user.user_type == "2":
-                cmt = ElectoralCommittee.objects.get(fullname_id=request.user.id)
-                if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope:
-                    e.update(started=True)
-                    messages.success(request, f"{e[0].title} Election Started.")
-                else:
-                    messages.error(request, "Access to that resource is denied!")
-            else:
-                messages.error(request, "No access here!") 
-                
-        
-    return redirect(reverse("viewElections"))
 
-def stopElection(request):
-    req = stoper(request)
-    return redirect(req)
 
 def viewCandidates(request):
     form = CandidateForm(request.POST or None, request.FILES or None)

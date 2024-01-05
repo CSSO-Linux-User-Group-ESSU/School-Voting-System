@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from administrator.backend import ElectionStop, ElectionStart
+
 
 
 urlpatterns = [
@@ -33,8 +35,8 @@ urlpatterns = [
     path('election/select', views.viewElections, name="viewElections"),
     path('election/delete', views.delete_election, name="deleteElection"),
     path('election/select/id', views.election_by_id, name="viewElection"),
-    path('election/start', views.startElection, name="startElection"),
-    path('election/stop', views.stopElection, name="stopElection"),
+    path('election/start', ElectionStart.startElection, name="startElection"),
+    path('election/stop', ElectionStop.stoper, name="stopElection"),
 
 
     # * Settings (Ballot Position and Election Title)

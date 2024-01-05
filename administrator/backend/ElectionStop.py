@@ -25,12 +25,12 @@ def stoper(request : HttpRequest) -> HttpResponseRedirect:
     #Check it the request method is POST not GET
     if request.method != "POST":
 
-        #Show an error the method is GET
+        #Show an error when the method is GET
         messages.error(request, "Access To This Resources Denied!")
 
     else:
         #Get the election data from the database
-        e = Election.objects.filter(id=request.POST.get("stop_id"))
+        e : Election = Election.objects.filter(id=request.POST.get("stop_id"))
 
         #Check for user's type of permissions
         if request.user.user_type == "1":
@@ -40,7 +40,7 @@ def stoper(request : HttpRequest) -> HttpResponseRedirect:
         
         elif request.user.user_type == "2":
             #ELectoral committee still need to be verified if they are allowed and have limited access
-            cmt = ElectoralCommittee.objects.get(fullname_id=request.user.id) #Get the electoral committee data
+            cmt : ElectoralCommittee = ElectoralCommittee.objects.get(fullname_id=request.user.id) #Get the electoral committee data
 
             #Check if the committee and election have the same college of department
             if e[0].course_limit and e[0].course_limit.college == cmt.scope or e[0].college_limit and e[0].college_limit == cmt.scope:
@@ -55,4 +55,4 @@ def stoper(request : HttpRequest) -> HttpResponseRedirect:
             messages.error(request, "No Access Here!")
     
     #return HttpResponseRedirect
-    return reverse("viewElections")
+    return redirect(reverse("viewElections"))

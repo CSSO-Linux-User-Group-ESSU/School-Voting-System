@@ -388,6 +388,8 @@ def viewElections(request):
         user_data = ElectoralCommittee.objects.get(fullname_id=request.user.id)
         if not user_data.ssc:
             on_going = Election.objects.filter(Q(course_limit__college = user_data.scope) | Q(college_limit = user_data.scope))
+        else:
+            on_going = Election.objects.filter(scope=1)
     context = {
         "electionForm" : electionForm,
         "on_going" : on_going,
@@ -425,6 +427,7 @@ def election_by_id(request):
         previous = ElectionForm(instance=election)
         context['form'] = str(previous.as_p())
     return JsonResponse(context)
+
 
 
 def viewCandidates(request):

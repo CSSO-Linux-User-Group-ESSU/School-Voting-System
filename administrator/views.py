@@ -171,16 +171,6 @@ def dashboard(request):
     context['page_title'] = "Dashboard"
     return render(request, "admin/home.html", context)
 
-
-def remove_college(request):
-    if request.method == "POST":
-        college_to_delete = College.objects.get(id=request.POST.get("college"))
-        college_to_delete.delete()
-        messages.success(request, "Deleted")
-    else:
-        messages.error(request, "Access To this Resources is Denied!")
-    return redirect(reverse("course"))
-
 #Added method for adding course and rendering the html
 def course(request):
     colleges = Course.objects.annotate(voter_count=Count('voter')) #Query with the count of voter each course

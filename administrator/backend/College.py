@@ -24,7 +24,7 @@ def colleges(request : HttpRequest) -> HttpResponseRedirect:
     """
 
     #Retrieve the form filled byu the user.
-    collegesForm = CollegeForm(request.POST)
+    collegesForm : CollegeForm = CollegeForm(request.POST)
 
     #Check if the reqest method is POST
     if request.method == "POST":

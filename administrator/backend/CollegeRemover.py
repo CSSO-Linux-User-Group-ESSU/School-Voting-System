@@ -28,7 +28,7 @@ def remove_college(request : HttpRequest) -> HttpResponseRedirect:
     if request.method == "POST":
 
         #Get the college data based on the ID given
-        college_to_delete = College.objects.get(id=request.POST.get("college"))
+        college_to_delete : College = College.objects.get(id=request.POST.get("college"))
 
         #Delete the college in the database
         college_to_delete.delete()

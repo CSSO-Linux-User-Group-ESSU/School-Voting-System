@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from administrator.backend import ElectionStop, ElectionStart
+from administrator.backend import ElectionStop, ElectionStart, College
 
 
 
@@ -15,7 +15,7 @@ urlpatterns = [
     
     #Added path for managing the course
     path("voters/course", views.course, name="course"),
-    path("voters/colleges", views.colleges, name="colleges"), 
+    path("voters/colleges", College.colleges, name="colleges"), 
     path("voters/course/delete", views.delete_course, name="deleteCourse"),
     path("voters/college/delete", views.remove_college, name="removeCollege"),   
 

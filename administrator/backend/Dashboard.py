@@ -29,16 +29,16 @@ def dashboard(request : HttpRequest) -> HttpResponse:
 
     try:
         #Get the electoral committee data if the one logging in is a committee member
-        user_data = ElectoralCommittee.objects.get(fullname_id = request.user.id)
+        user_data : ElectoralCommittee = ElectoralCommittee.objects.get(fullname_id = request.user.id)
     except Exception:
         #Set the userr data to none if not a memeber of committee
         user_data = None
     
     #Initialize varaiable to be filled later
-    context = {}
-    chart_data = {}
-    search = "all"
-    show_chart = False
+    context : dict = {}
+    chart_data : dict = {}
+    search : str = "all"
+    show_chart : bool = False
 
     if not active_election:
         #No active Election

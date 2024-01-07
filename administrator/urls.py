@@ -1,11 +1,12 @@
 from django.urls import path
 from . import views
 from administrator.backend import ElectionStop, ElectionStart, College, CollegeRemover
+from administrator.backend import Dashboard
 
 
 
 urlpatterns = [
-    path('', views.dashboard, name="adminDashboard"),
+    path('', Dashboard.dashboard, name="adminDashboard"),
     # * Voters
     path('voters', views.voters, name="adminViewVoters"),
     path('voters/view', views.view_voter_by_id, name="viewVoter"),

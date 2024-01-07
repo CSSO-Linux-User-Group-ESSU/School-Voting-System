@@ -93,7 +93,6 @@ class PrintView(PDFView):
         print(context)
         return context
 
-
 def dashboard(request):
     active_election = Election.objects.filter(started=True)
     try:
@@ -172,16 +171,6 @@ def dashboard(request):
     context['page_title'] = "Dashboard"
     return render(request, "admin/home.html", context)
 
-#Added method of adding course
-def colleges(request):
-    collegesForm = CollegeForm(request.POST)         #Get tge form from forms.py
-    if request.method == "POST":                        #Ensuring correct usage
-        if collegesForm.is_valid():                     #validate the form
-            collegesForm.save()                         #Save to database
-            messages.success(request, "Added College")  
-        else:
-            messages.error(request, "Invalid Form or College may already exist.")
-    return redirect(reverse("course"))
 
 def remove_college(request):
     if request.method == "POST":

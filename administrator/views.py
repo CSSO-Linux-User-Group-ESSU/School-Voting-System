@@ -93,33 +93,6 @@ class PrintView(PDFView):
         print(context)
         return context
 
-
-def voters(request):
-    ordering = ["course", "year_level", "admin"]
-    voters = Voter.objects.all().order_by(*ordering)
-    userForm = CustomUserForm(request.POST or None)
-    voterForm = VoterForm(request.POST or None)
-    fileupload = FileUploadForm()
-    context = {
-        'form1': userForm,
-        'form2': voterForm,
-        'voters': voters,
-        'page_title': 'Voters List',
-        'userupload' : fileupload
-    }
-    if request.method == 'POST':
-        if userForm.is_valid() and voterForm.is_valid():
-            user = userForm.save(commit=False)
-            voter = voterForm.save(commit=False)
-            voter.admin = user
-            user.save()
-            voter.save()
-            messages.success(request, "New voter created")
-        else:
-            messages.error(request, "Form validation failed")
-    return render(request, "admin/voters.html", context)
-
-
 #Function handler when uploading a file of voters
 def uploadUser(request : object):
     if request.method == "POST":

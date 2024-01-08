@@ -93,24 +93,6 @@ class PrintView(PDFView):
         print(context)
         return context
 
-#Added method for adding course and rendering the html
-def course(request):
-    colleges = Course.objects.annotate(voter_count=Count('voter')) #Query with the count of voter each course
-    courseForm = CourseForm(request.POST or None)
-    collegeForm = CollegeForm(request.POST or None)
-    context = {
-        'course' : courseForm,
-        'college' : collegeForm,
-        'colleges' : colleges,
-        'page_title' : "Courses/college"
-    }
-
-    if request.method == "POST":
-        if courseForm.is_valid():
-            courseForm.save()
-            messages.success(request, "Added Course")
-    return render(request, "admin/colleges.html", context)
-
 
 #Added method for deleting a course
 def delete_course(request):

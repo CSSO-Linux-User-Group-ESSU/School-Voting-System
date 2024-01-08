@@ -35,7 +35,7 @@ def course(request : HttpRequest) -> HttpResponse:
     collegeForm : CollegeForm = CollegeForm(request.POST or None)
 
     #Add everything in a dictionary to be used in the jinja when rendering
-    context = {
+    context : dict[object | str] = {
         'course' : courseForm,
         'college' : collegeForm,
         'colleges' : colleges,

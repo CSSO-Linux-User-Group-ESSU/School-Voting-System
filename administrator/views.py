@@ -94,19 +94,6 @@ class PrintView(PDFView):
         return context
 
 
-#Added method for deleting a course
-def delete_course(request):
-    if request.method != "POST":
-        messages.error(request, "Acces To This Resources is Denied!")
-    else:
-        try:
-            course_id = Course.objects.get(id=request.POST.get("course_delete"))
-            course_id.delete()
-            messages.success(request, "Course Deleted!")
-        except Exception:
-            messages.error(request, "Access To This Resources is Denied!")
-    return redirect(reverse("course"))
-
 def voters(request):
     ordering = ["course", "year_level", "admin"]
     voters = Voter.objects.all().order_by(*ordering)

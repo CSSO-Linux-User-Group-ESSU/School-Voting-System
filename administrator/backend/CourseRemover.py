@@ -35,7 +35,7 @@ def delete_course(request : HttpRequest) -> HttpResponseRedirect:
         try:
 
             #Extract the coure id included in the POST request and retrieve the course data based on that id
-            course_id = Course.objects.get(id=request.POST.get("course_delete"))
+            course_id : Course = Course.objects.get(id=request.POST.get("course_delete"))
             
             #Delete the course in the database
             course_id.delete()

@@ -4,6 +4,7 @@ from voting.models import Voter
 from voting.forms import VoterForm, FileUploadForm
 from account.forms import CustomUserForm
 from django.http import HttpRequest, HttpResponse
+from typing import Union
 
 
 def voters(request : HttpRequest) -> HttpResponse:
@@ -26,19 +27,19 @@ def voters(request : HttpRequest) -> HttpResponse:
         via a POST request, a new voter is created, and a success message is displayed.
     """
     #Ordering of the data when querying
-    ordering = ["course", "year_level", "admin"]
+    ordering : list[str] = ["course", "year_level", "admin"]
 
     #Get all the voters based on the ordering
-    voters = Voter.objects.all().order_by(*ordering)
+    voters : Voter = Voter.objects.all().order_by(*ordering)
 
     #Get the user creation form, voter creation form and Bulk user upload. 
     #The request.POST or None means that a user can create or validate a form
-    userForm = CustomUserForm(request.POST or None)
-    voterForm = VoterForm(request.POST or None)
-    fileupload = FileUploadForm()
+    userForm : CustomUserForm = CustomUserForm(request.POST or None)
+    voterForm : VoterForm = VoterForm(request.POST or None)
+    fileupload : FileUploadForm = FileUploadForm()
 
     #Add everything in a dictionary to be used in the jinja when rendering
-    context = {
+    context : dict[object | str] = {
         'form1': userForm,
         'form2': voterForm,
         'voters': voters,

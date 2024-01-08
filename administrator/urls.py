@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from administrator.backend import ElectionStop, ElectionStart, College, CollegeRemover
-from administrator.backend import Dashboard, Course, CourseRemover, Voters
+from administrator.backend import Dashboard, Course, CourseRemover, Voters, BulkUpload
 
 
 
@@ -12,7 +12,7 @@ urlpatterns = [
     path('voters/view', views.view_voter_by_id, name="viewVoter"),
     path('voters/delete', views.deleteVoter, name='deleteVoter'),
     path('voters/update', views.updateVoter, name="updateVoter"),
-    path("voters/upload", views.uploadUser, name="uploadUser"),
+    path("voters/upload", BulkUpload.uploadUser, name="uploadUser"),
     
     #Added path for managing the course
     path("voters/course", Course.course, name="course"),

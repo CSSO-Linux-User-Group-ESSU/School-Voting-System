@@ -8,7 +8,6 @@ from voting.forms import *
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
-import json  # Not used
 from django_renderpdf.views import PDFView
 from django.db.models import Count, Q
 from administrator.voter_upload import upload_voters
@@ -93,31 +92,6 @@ class PrintView(PDFView):
         print(context)
         return context
 
-#Function handler when uploading a file of voters
-def uploadUser(request : object):
-    if request.method == "POST":
-        form = FileUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            save_file = form.save()
-            filepath = UploadFile.objects.get(id=save_file.pk)
-            try:
-                error_student = upload_voters(filepath.voters_file)
-            except Exception:
-                os.remove(f"./media/{str(filepath.voters_file)}")
-                messages.error(request, "Invalid File Format! Did you ask for a form from CCS?")
-            else:
-                if error_student:
-                    invalid_student = ""
-                    for student in error_student:
-                        invalid_student += f"{student}, "
-                    messages.error(request, f"Invalid Students: {invalid_student}")
-                else:
-                    messages.success(request, "Uploading Voters Now")
-        else:
-            messages.error(request, "File mismatch")
-    else:
-        messages.error(request, "Access To This Resource Denied")
-    return redirect(reverse("adminViewVoters"))
 
 
 def view_voter_by_id(request):

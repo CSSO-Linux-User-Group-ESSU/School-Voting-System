@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from administrator.backend import (
     ElectionStop, ElectionStart, College, CollegeRemover, Dashboard, Course, CourseRemover,
-    Voters, BulkUpload, VoterAjax
+    Voters, BulkUpload, VoterAjax, PositionAjax
 )
 
 
@@ -22,7 +22,7 @@ urlpatterns = [
     path("voters/college/delete", CollegeRemover.remove_college, name="removeCollege"),   
 
     # * Position
-    path('position/view', views.view_position_by_id, name="viewPosition"),
+    path('position/view', PositionAjax.view_position_by_id, name="viewPosition"),
     path('position/update', views.updatePosition, name="updatePosition"),
     path('position/delete', views.deletePosition, name='deletePosition'),
     path('positions/view', views.viewPositions, name='viewPositions'),

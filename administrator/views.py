@@ -93,22 +93,6 @@ class PrintView(PDFView):
         return context
 
 
-
-def view_voter_by_id(request):
-    voter_id = request.GET.get('id', None)
-    voter = Voter.objects.filter(id=voter_id)
-    context = {}
-    if not voter.exists():
-        context['code'] = 404
-    else:
-        context['code'] = 200
-        voter = voter[0]
-        context['first_name'] = voter.admin.first_name
-        context['last_name'] = voter.admin.last_name
-        context['id'] = voter.id
-    return JsonResponse(context)
-
-
 def view_position_by_id(request):
     pos_id = request.GET.get('id', None)
     pos = Position.objects.filter(id=pos_id)

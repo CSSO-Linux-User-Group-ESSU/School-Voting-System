@@ -10,7 +10,7 @@ from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from django_renderpdf.views import PDFView
 from django.db.models import Count, Q
-from administrator.voter_upload import upload_voters
+from administrator.backend.voter_upload import upload_voters
 import os
 from administrator.backend.ElectionStop import stoper
 
@@ -91,25 +91,6 @@ class PrintView(PDFView):
         context['positions'] = position_data
         print(context)
         return context
-
-
-def viewPositions(request):
-    positions = Position.objects.order_by('-priority').all()
-    form = PositionForm(request.POST or None)
-    context = {
-        'positions': positions,
-        'form1': form,
-        'page_title': "Positions"
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            form = form.save(commit=False)
-            form.priority = positions.count() + 1  # Just in case it is empty.
-            form.save()
-            messages.success(request, "New Position Created")
-        else:
-            messages.error(request, "Form errors")
-    return render(request, "admin/positions.html", context)
 
 
 def updatePosition(request):

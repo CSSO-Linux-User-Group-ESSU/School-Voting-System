@@ -3,7 +3,7 @@ from django.shortcuts import redirect, reverse
 import os
 from voting.forms import FileUploadForm
 from voting.models import UploadFile
-from administrator.voter_upload import upload_voters
+from administrator.backend.voter_upload import upload_voters
 from django.http import HttpRequest, HttpResponseRedirect
 
 

@@ -1,17 +1,18 @@
 from django.urls import path
 from . import views
-from administrator.backend import ElectionStop, ElectionStart, College, CollegeRemover
-from administrator.backend import Dashboard, Course, CourseRemover, Voters, BulkUpload
-
+from administrator.backend import (
+    ElectionStop, ElectionStart, College, CollegeRemover, Dashboard, Course, CourseRemover,
+    Voters, BulkUpload, VoterAjax, PositionAjax, VoterUpdate
+)
 
 
 urlpatterns = [
     path('', Dashboard.dashboard, name="adminDashboard"),
     # * Voters
     path('voters', Voters.voters, name="adminViewVoters"),
-    path('voters/view', views.view_voter_by_id, name="viewVoter"),
+    path('voters/view', VoterAjax.view_voter_by_id, name="viewVoter"),
     path('voters/delete', views.deleteVoter, name='deleteVoter'),
-    path('voters/update', views.updateVoter, name="updateVoter"),
+    path('voters/update', VoterUpdate.updateVoter, name="updateVoter"),
     path("voters/upload", BulkUpload.uploadUser, name="uploadUser"),
     
     #Added path for managing the course
@@ -21,7 +22,7 @@ urlpatterns = [
     path("voters/college/delete", CollegeRemover.remove_college, name="removeCollege"),   
 
     # * Position
-    path('position/view', views.view_position_by_id, name="viewPosition"),
+    path('position/view', PositionAjax.view_position_by_id, name="viewPosition"),
     path('position/update', views.updatePosition, name="updatePosition"),
     path('position/delete', views.deletePosition, name='deletePosition'),
     path('positions/view', views.viewPositions, name='viewPositions'),

@@ -1,5 +1,6 @@
 from django.http import JsonResponse, HttpRequest
 from voting.models import Voter
+from typing import Union
 
 def view_voter_by_id(request : HttpRequest) -> JsonResponse:
     """
@@ -27,7 +28,7 @@ def view_voter_by_id(request : HttpRequest) -> JsonResponse:
     #Extract the voter data based on the ID from the request
     voter : Voter = Voter.objects.filter(id=voter_id)
 
-    context : dict[str | int] = {}
+    context : Union[str, int] = {}
     
     if not voter.exists():
         #Only send a code response of 404 if the voter doesn't exist

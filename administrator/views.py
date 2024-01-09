@@ -93,22 +93,6 @@ class PrintView(PDFView):
         return context
 
 
-def updateVoter(request):
-    if request.method != 'POST':
-        messages.error(request, "Access Denied")
-    try:
-        instance = Voter.objects.get(id=request.POST.get('id'))
-        user = CustomUserForm(request.POST or None, instance=instance.admin)
-        voter = VoterForm(request.POST or None, instance=instance)
-        user.save()
-        voter.save()
-        messages.success(request, "Voter's bio updated")
-    except:
-        messages.error(request, "Access To This Resource Denied")
-
-    return redirect(reverse('adminViewVoters'))
-
-
 def deleteVoter(request):
     if request.method != 'POST':
         messages.error(request, "Access Denied")

@@ -53,9 +53,9 @@ class Position(models.Model):
 
 class Election(models.Model):
     class Scope(models.TextChoices):
-        University = 1, 
-        College = 2,
-        Program = 3
+        University = '1', 'University' 
+        College = '2', 'College'
+        Program = '3', 'Program'
 
     title = models.CharField(max_length=50)
     scope = models.TextField(choices=Scope.choices)

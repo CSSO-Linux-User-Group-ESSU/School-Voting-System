@@ -263,6 +263,11 @@
   function enableForm() {
     $("#id_username").prop('disabled', false)
     $("#id_password").prop('disabled', false)
+      
+    setTimeout(function() {
+      $("#id_username").prop('disabled', true)
+      $("#id_password").prop('disabled', true)
+    }, 50)
   }
 
   function changeUploadicon() {

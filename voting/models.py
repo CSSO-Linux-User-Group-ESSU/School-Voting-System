@@ -24,12 +24,13 @@ class Voter(models.Model):
         Third = 3,  "Third"
         Fourth = 4 , "Fourth"
 
-    admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    mother_maiden_middle_name = models.CharField(max_length=20)
+    admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE) 
+    middle_name = models.CharField(max_length=50, null=False) 
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     year_level = models.IntegerField(choices=YearLevel.choices)
     voted = models.BooleanField(default=False)
-    id_number = models.CharField(null=True, max_length=20)
+    is_logged_in = models.BooleanField(default=False)
+    id_number = models.CharField(null=False, max_length=20)
 
     def save(self, *args, **kwargs):
         self.id = str(self.admin.id)
@@ -87,8 +88,8 @@ class Votes(models.Model):
 
 
 def validate_voter_file(voter_file):
-    if not voter_file.name.endswith(".csv"):
-        raise forms.ValidationError("Not a csv file")
+    if not voter_file.name.endswith(".xlsx"):
+        raise forms.ValidationError("Not an excel file")
 
 class UploadFile(models.Model):
     voters_file = models.FileField(upload_to='voters', validators=[validate_voter_file])

@@ -1,35 +1,61 @@
-import csv
 from account.models import CustomUser
-from voting.models import Voter
+from voting.models import Voter, Course
 from voting.forms import *
 from django.contrib.auth.hashers import make_password
+from pandas import read_excel, notna
+from administrator.backend.course_checker import course_checker
+from typing import Union
 
-def upload_voters(filepath : str) -> None:
-    with open(f'./media/{str(filepath)}', "r") as voter_file:
-        try:
-            users = csv.DictReader(voter_file)
-        except Exception as e:
-            raise ValueError(e)
-        else:
-            year_levels = ["First", "Second", "Third", "Fourth"]
-            for user in users:
-                user_course = Course.objects.get(course=user["Course"])
-                int_year_level = int(user['Year'])
-                year_level = Voter.YearLevel[year_levels[int_year_level-1]]
-                uname = f"{user['mother Maiden Middle Name']}.{user['ID Number']}"
-            
-                userObj = CustomUser.objects.create(
-                        password = make_password(uname),
-                        first_name = user["First Name"],
-                        last_name = user["Last Name"],
-                        username = uname,
-                        )
+def upload_voters(filepath : str) -> Union[list[str], str]:
+    error_student = []
+    try:
+        data = read_excel(f'./media/{str(filepath)}')
+        for i in data.index:
+            index = data.loc[i, "NO"]
+            section = data.loc[i, "CODE"]
+            if section == "Section:":
+
+                course_acrnym = data.loc[i, "NAME"].split(" ")[0]
+                full_course_name = course_checker(course_acrnym)
+                if not full_course_name:
+                    return "Invalid Course"
                 
-                voter = Voter.objects.create(
+                course = Course.objects.get(course=full_course_name)
+                year_level = int(data.loc[i, "NAME"].split(" ")[1][0])
+            
+            if notna(index):
+                try:
+
+                    number = int(index)
+                    student_id = data.loc[i, "CODE"]
+                    name = data.loc[i, "NAME"].split(",")
+                    last_name = name[0].title()
+                    middle_name = name[1].split(" ")[-1].title()
+                    first_name = " ".join(name[1].split(" ")[:-1]).strip().title()
+                    
+                    raw_pass = f"{middle_name}@{student_id}"
+
+                    userObj = CustomUser.objects.create(
+                        password = make_password(raw_pass),
+                        first_name = first_name,
+                        last_name = last_name,
+                        username = f"{student_id}@{middle_name}",
+                    )
+                
+                    voter = Voter.objects.create(
                         admin = userObj,
-                        course = user_course,
-                        id_number = user["ID Number"],
+                        course = course,
+                        id_number = student_id,
                         year_level = year_level
                         )
 
-                voter.save()
+                    voter.save()
+
+                except ValueError as e:
+                    print(e)
+                    
+                except IndexError:
+                    error_student.append(number)
+
+    except Exception as e:
+        return e

@@ -6,3 +6,5 @@ django-renderpdf
 requests
 whitenoise
 mysqlclient
+pandas
+openpyxl

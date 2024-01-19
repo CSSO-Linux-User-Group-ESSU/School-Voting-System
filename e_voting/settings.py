@@ -153,6 +153,3 @@ STATICFILES_DIRS = [
 AUTH_USER_MODEL = 'account.CustomUser'
 AUTHENTICATION_BACKENDS = ['account.username_backend.UsernameBackend']
 
-ELECTION_TITLE_PATH = os.path.join(
-    BASE_DIR, 'election_title.txt')  # Election Title File
-

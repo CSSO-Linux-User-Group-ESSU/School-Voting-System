@@ -1,0 +1,76 @@
+{
+    "College of Computer Studies" : [
+        {"course":"BS in Computer Science", "acrnym" : "BSCS"},
+        {"course":"BS in Information Technology", "acrnym" : "BSIT"},
+        {"course":"BS in Entertainment and Multimedia Computing", "acrnym" : "BSEMC"},
+        {"course":"Associate in Computer Technology", "acrnym" : "ACT"}
+    ],
+
+    "College of Engineering" : [
+        {"course":"BS in Electrical Engineering", "acrnym" : "BSEE"},
+        {"course":"BS in Civil Engineering", "acrnym" : "BSCE"},
+        {"course":"BS in Computer Engineering", "acrnym" : "BSCpE"}
+    ],
+
+    "College of Technology" : [
+        {"course":"BS in Industrial Technology Major in Autamotive Technology", "acrnym" : "BSIT-AT"},
+        {"course":"BS in Industrial Technology Major in Electronics Technology", "acrnym" : "BSIT-ElT"},
+        {"course":"BS in Industrial Technology Major in Electrical Technology", "acrnym" : "BSIT-ET"},
+        {"course":"BS in Industrial Technology Major in Drafting Technology", "acrnym" : "BSIT-DT"}
+    ],
+
+    "College of Education" : [
+	    {"course":"BS in Secondary Education Major in Social Studies", "acrnym" : "BSED-SocSci"},
+	    {"course":"BS in Secondary Education Major in Mathematics", "acrnym" : "BSED-Mathematics"},
+	    {"course":"BS in Secondary Education Major in Science", "acrnym" : "BSED-Science"},
+	    {"course":"BS in Secondary Education Major in English", "acrnym" : "BSED-English"},
+	    {"course":"BS in Secondary Education Major in Filipino", "acrnym" : "BSED-Filipino"},
+	    {"course":"Bachelor in Elementary Education", "acrnym" : "BEED"}
+    ],
+
+    "College of Apllied Science" : [
+        {"course":"BA in Communication", "acrnym" : "BACom"},
+        {"course":"BA in Political Science", "acrnym" : ""}
+    ],
+
+    "College of Nursing and Allied Science" : [
+        {"course":"BS in Biology", "acrnym" : "BSBio"},
+        {"course":"BS in Social Work", "acrnym" : ""},
+        {"course":"BS in Nursing", "acrnym" : "BSNursing"},
+        {"course":"Diploma in Midwifery leading to BS Midwifery", "acrnym" : ""}
+    ],
+
+    "College of Business Management and Administration" : [
+        {"course":"BS in Entreprenuership", "acrnym" : ""},
+        {"course":"BS in Acountancy", "acrnym" : ""},
+        {"course":"BS in Acounting Information System", "acrnym" : "BSAIS"},
+        {"course":"BS in Business Adminnitration Major in Financial Management", "acrnym" : "BSBA-FM"},
+        {"course":"BS in Business Adminnitration Major in Marketing Management", "acrnym" : "BSBA-MM"},
+        {"course":"BS in Business Adminnitration Major in Human Resource Development Management", "acrnym" : "BSBA-HR"},
+        {"course":"BS in Business Adminnitration Major in Business Economics", "acrnym" : "BSBA-BE"}
+
+    ],
+    
+    "College of Criminal Justice and Education" : [
+        {"course":"BS in Criminology", "acrnym" : "BSCriminology"}
+
+    ],
+
+    "College of Agriculture" : [
+        {"course":"BS in Agriculture Major in Animal Science", "acrnym" : ""},
+        {"course":"BS in Agriculture Major in Agronomy", "acrnym" : ""},
+        {"course":"BS in Agriculture Major in Horticulture", "acrnym" : ""},
+        {"course":"BS in Environmental Science", "acrnym" : "BSES"},
+        {"course":"BS in Agricultural Technology", "acrnym" : ""},
+        {"course":"BS in Agriculture Major in Horticulture", "acrnym" : ""},
+        {"course":"BS in Fisheries", "acrnym" : "BSF"}
+        
+    ],
+    
+    "College of Hospitality Management" : [
+        {"course":"BS in Tourism Management", "acrnym" : "BSTM"},
+        {"course":"BS in Hospitality Management", "acrnym" : "BSHM"}
+    
+    ]
+
+}

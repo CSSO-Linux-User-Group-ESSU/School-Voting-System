@@ -9,7 +9,7 @@ class FileUploadForm(forms.ModelForm):
         fields = ['voters_file']
         widgets = {
             'voters_file' : forms.FileInput(attrs={
-                'accept' : '.csv',
+                'accept' : '.xlsx',
                 'onchange' : 'changeUploadicon()'
             })
         }
@@ -17,14 +17,14 @@ class FileUploadForm(forms.ModelForm):
 class VoterForm(FormSettings):
     class Meta:
         model = Voter
-        fields = ["mother_maiden_middle_name", 'id_number', 'course', 'year_level']
+        fields = ['middle_name', 'id_number', 'course', 'year_level']
         widgets = {
             'id_number' : forms.TextInput(attrs= {
                 'onkeyup' : 'updateUsername()'
             }),
-            'mother_maiden_middle_name' : forms.TextInput(attrs= {
+            'middle_name' : forms.TextInput(attrs= {
                 'onkeyup' : 'updateUsername()'
-            })
+            }),
         }
 
 

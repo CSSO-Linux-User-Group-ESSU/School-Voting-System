@@ -15,6 +15,7 @@ def uploadUser(request : HttpRequest) -> HttpResponseRedirect:
         request (object): The HTTP request object.
 
     Returns:
+    
         HttpResponseRedirect: Redirects to the 'adminViewVoters' page after processing the request.
 
     Raises:
@@ -53,15 +54,17 @@ def uploadUser(request : HttpRequest) -> HttpResponseRedirect:
             
             else:
                 if error_student:
-                    #Show all the student who have an error creating an account
-                    invalid_student : str = ""
-                    for student in error_student:
-                        invalid_student += f"{student}, "
-                    messages.error(request, f"Invalid Students: {invalid_student}")
+                    
+                    if type(error_student) == list:
+                            #Show all the student who have an error creating an account
+                            error = ",".join(error_student)
+                            messages.error(request, f"Invalid Students Number: {error}")
+                    else:
+                        messages.error(request, error_student)
 
                 else:
                     #Show a message that it is uploading if there's no error
-                    messages.success(request, "Uploading Voters Now")
+                    messages.success(request, "Voters Uploaded Now")
         else:
             #Show an error message if the file type is not a csv file
             messages.error(request, "File mismatch")

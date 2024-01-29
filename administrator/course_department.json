@@ -29,20 +29,20 @@
     ],
 
     "College of Apllied Science" : [
-        {"course":"BA in Communication", "acrnym" : "BACom"},
+        {"course":"BA in Communication", "acrnym" : ""},
         {"course":"BA in Political Science", "acrnym" : ""}
     ],
 
     "College of Nursing and Allied Science" : [
         {"course":"BS in Biology", "acrnym" : "BSBio"},
-        {"course":"BS in Social Work", "acrnym" : ""},
+        {"course":"BS in Social Work", "acrnym" : "BSSW"},
         {"course":"BS in Nursing", "acrnym" : "BSNursing"},
         {"course":"Diploma in Midwifery leading to BS Midwifery", "acrnym" : ""}
     ],
 
     "College of Business Management and Administration" : [
         {"course":"BS in Entreprenuership", "acrnym" : ""},
-        {"course":"BS in Acountancy", "acrnym" : ""},
+        {"course":"BS in Acountancy", "acrnym" : "BSACCT"},
         {"course":"BS in Acounting Information System", "acrnym" : "BSAIS"},
         {"course":"BS in Business Adminnitration Major in Financial Management", "acrnym" : "BSBA-FM"},
         {"course":"BS in Business Adminnitration Major in Marketing Management", "acrnym" : "BSBA-MM"},

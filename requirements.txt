@@ -8,3 +8,4 @@ whitenoise
 mysqlclient
 pandas
 openpyxl
+mariadb

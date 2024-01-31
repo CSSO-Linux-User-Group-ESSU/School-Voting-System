@@ -51,4 +51,4 @@ def course_checker(course : str) -> Union[str, None]:
 
 #Testing purposes
 if __name__ == "__main__":
-    print(course_checker("BSEMC"))
+    print(course_checker("BSCS"))

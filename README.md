@@ -1,4 +1,4 @@
-# CCS-Voting
+# Student Voting System
 A voting system for CCS.
 
 # Setting up github in terminal 

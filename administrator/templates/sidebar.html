@@ -27,8 +27,7 @@
         <li class=""><a href="{% url 'committee' %}"><i class="fa fa-users"></i> <span>Committee</span></i></a></li>
         <li class="header">SETTINGS</li>
         <li class=""><a href="{% url 'ballot_position' %}"><i class="fa fa-file-text"></i> <span>Ballot Position</span></a></li>
-        <li class=""><a href="#config" data-toggle="modal"><i class="fa fa-font"></i> <span>Election Title</span></a></li>
-      {% elif request.user.user_type == "2" %}   
+        {% elif request.user.user_type == "2" %}   
         <li class="header">REPORTS</li>
         <li class=""><a href="{% url 'adminDashboard' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
         <li class=""><a href="{% url 'viewVotes' %}"><span class="glyphicon glyphicon-lock"></span> <span>Votes</span></a></li>
@@ -37,7 +36,6 @@
         <li class=""><a href="{% url 'viewElections' %}"><i class="fa fa-black-tie"></i> <span>Election</span></a></li>
         <li class="header">SETTINGS</li>
         <li class=""><a href="{% url 'ballot_position' %}"><i class="fa fa-file-text"></i> <span>Ballot Position</span></a></li>
-        <li class=""><a href="#config" data-toggle="modal"><i class="fa fa-font"></i> <span>Election Title</span></a></li>
       {% endif %}
         
       <li class="header">EXIT</li>

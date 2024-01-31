@@ -2,9 +2,14 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from college_setup import college_setup
 
 
 def main():
+    args = sys.argv
+    if args[1] == "runserver" and not os.environ.get("RUN_MAIN", False):
+        """Execute this code everytime the server start"""
+        status = college_setup()
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'e_voting.settings')
     try:

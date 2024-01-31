@@ -30,23 +30,24 @@ def upload_voters(filepath : str) -> Union[list[str], str]:
                     student_id = data.loc[i, "CODE"]
                     name = data.loc[i, "NAME"].split(",")
                     last_name = name[0].title()
-                    middle_name = name[1].split(" ")[-1].title()
+                    _middle_name = name[1].split(" ")[-1].title()
                     first_name = " ".join(name[1].split(" ")[:-1]).strip().title()
                     
-                    raw_pass = f"{middle_name}@{student_id}"
+                    raw_pass = f"{_middle_name}@{student_id}"
 
                     userObj = CustomUser.objects.create(
                         password = make_password(raw_pass),
                         first_name = first_name,
                         last_name = last_name,
-                        username = f"{student_id}@{middle_name}",
+                        username = f"{student_id}@{_middle_name}",
                     )
                 
                     voter = Voter.objects.create(
                         admin = userObj,
                         course = course,
                         id_number = student_id,
-                        year_level = year_level
+                        year_level = year_level,
+                        middle_name = _middle_name
                         )
 
                     voter.save()
@@ -55,7 +56,9 @@ def upload_voters(filepath : str) -> Union[list[str], str]:
                     print(e)
                     
                 except IndexError:
-                    error_student.append(number)
+                    error_student.append(str(number))
 
     except Exception as e:
         return e
+
+    return error_student
